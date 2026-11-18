@@ -916,13 +916,13 @@ document.querySelectorAll("[data-select-cottage]").forEach((button) => {
   });
 });
 
-// kartın istənilən yerinə (şəkil, ad, mətn) klik "Seç" düyməsi kimi işləyir; klaviatura üçün düymənin özü qalır
+// kartın istənilən yerinə (şəkil, ad, mətn) klik birbaşa evin səhifəsini açır; "Seç" düyməsi qonaq sayı pəncərəsini açmağa davam edir
 document.querySelectorAll("[data-cottage-card]").forEach((card) => {
   card.addEventListener("click", (event) => {
     if (event.target.closest("button, a")) {
       return;
     }
-    card.querySelector("[data-select-cottage]")?.click();
+    window.location.href = buildHouseUrl(card.dataset.cottageCard);
   });
 });
 
