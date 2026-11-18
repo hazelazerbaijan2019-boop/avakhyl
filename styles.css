@@ -618,6 +618,15 @@ img {
   transform: translateY(-2px);
 }
 
+.stay-card[data-cottage-card] {
+  cursor: pointer;
+}
+
+.stay-card[data-cottage-card]:hover {
+  border-color: var(--leaf);
+  transform: translateY(-2px);
+}
+
 .stay-card img {
   width: 100%;
   height: 270px;

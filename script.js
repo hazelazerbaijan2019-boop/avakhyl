@@ -916,6 +916,16 @@ document.querySelectorAll("[data-select-cottage]").forEach((button) => {
   });
 });
 
+// kartın istənilən yerinə (şəkil, ad, mətn) klik "Seç" düyməsi kimi işləyir; klaviatura üçün düymənin özü qalır
+document.querySelectorAll("[data-cottage-card]").forEach((card) => {
+  card.addEventListener("click", (event) => {
+    if (event.target.closest("button, a")) {
+      return;
+    }
+    card.querySelector("[data-select-cottage]")?.click();
+  });
+});
+
 guestStepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const key = button.dataset.guestStep;
