@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avakhyl | Təbiətin içində ev rahatlığı</title>
+    <meta
+      name="description"
+      content="Avakhyl təbiətin içində sakit, özəl və rahat ev istirahəti üçün rezervasiya sorğusu."
+    />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+    <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="styles.css?v=20261118-8" />
+  </head>
+  <body>
+    <svg class="sprite" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-menu" viewBox="0 0 24 24">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="icon-map" viewBox="0 0 24 24">
+        <path d="M12 21s7-5.2 7-12A7 7 0 0 0 5 9c0 6.8 7 12 7 12Z" />
+        <path d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+      </symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="icon-leaf" viewBox="0 0 24 24">
+        <path d="M21 3c-9.2.4-15.4 4.9-17.6 12.6-.5 1.8.8 3.6 2.7 3.8C14.2 20.2 20.1 13.3 21 3Z" />
+        <path d="M4 20c4.5-6.5 9.1-9.8 14-11" />
+      </symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-5" />
+      </symbol>
+      <symbol id="icon-fire" viewBox="0 0 24 24">
+        <path d="M8.5 14.5A4 4 0 1 0 16 16c0-4-4-5.5-4-11-3 2-6 5-6 10a6 6 0 0 0 12 0c0-1.2-.3-2.4-.8-3.3" />
+      </symbol>
+      <symbol id="icon-wifi" viewBox="0 0 24 24">
+        <path d="M5 12.5a10.5 10.5 0 0 1 14 0M8.5 16a5.5 5.5 0 0 1 7 0M12 20h.01M2 9a15 15 0 0 1 20 0" />
+      </symbol>
+      <symbol id="icon-car" viewBox="0 0 24 24">
+        <path d="M5 17h14M7 17v2M17 17v2M4 13l2-6h12l2 6v4H4v-4ZM7 13h.01M17 13h.01" />
+      </symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+        <path d="M3.6 9h16.8M3.6 15h16.8M12 3c2.2 2.3 3.4 5.4 3.4 9S14.2 18.7 12 21c-2.2-2.3-3.4-5.4-3.4-9S9.8 5.3 12 3Z" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </symbol>
+      <symbol id="icon-instagram" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
+        <path d="M17.5 6.5h.01" />
+      </symbol>
+    </svg>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#home" aria-label="Avakhyl əsas səhifə" data-i18n-aria="aria.home">
+        <img
+          src="assets/avakhyl-logo.webp"
+          alt="Avakhyl"
+          data-brand-logo
+          data-logo-light="assets/avakhyl-logo.webp"
+          data-logo-dark="assets/avakhyl-logo.webp"
+        />
+      </a>
+
+      <nav class="desktop-nav" aria-label="Əsas naviqasiya" data-i18n-aria="aria.nav">
+        <a href="#homes" data-i18n="nav.homes">Kotec</a>
+        <a data-carry-params="avaxil.html" href="avaxil.html" data-i18n="nav.avaxil">Avaxıl haqqında</a>
+        <a href="#agach" data-i18n="nav.experience">AGACH</a>
+        <a href="#notes" data-i18n="nav.notes">Qeydlər</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switcher" aria-label="Dil seçimi" data-i18n-aria="aria.language">
+          <svg><use href="#icon-globe" /></svg>
+          <button type="button" data-lang="az" aria-pressed="true">AZ</button>
+          <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Qara fon">
+          <svg data-theme-icon><use href="#icon-moon" /></svg>
+          <span data-theme-label>Qara fon</span>
+        </button>
+        <a
+          class="icon-button instagram-button"
+          href="https://www.instagram.com/avakhyl/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Avakhyl Instagram"
+        >
+          <svg><use href="#icon-instagram" /></svg>
+        </a>
+        <button class="menu-button" type="button" aria-label="Menyunu aç" data-i18n-aria="aria.openMenu" data-menu-open>
+          <svg><use href="#icon-menu" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu" data-mobile-menu aria-hidden="true">
+      <div class="mobile-menu-inner">
+        <button class="icon-button mobile-close" type="button" aria-label="Menyunu bağla" data-i18n-aria="aria.closeMenu" data-menu-close>
+          <svg><use href="#icon-close" /></svg>
+        </button>
+        <a href="#homes" data-i18n="nav.homes">Kotec</a>
+        <a data-carry-params="avaxil.html" href="avaxil.html" data-i18n="nav.avaxil">Avaxıl haqqında</a>
+        <a href="#agach" data-i18n="nav.experience">AGACH</a>
+        <a href="#notes" data-i18n="nav.notes">Qeydlər</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <div class="mobile-controls">
+          <div class="lang-switcher">
+            <svg><use href="#icon-globe" /></svg>
+            <button type="button" data-lang="az" aria-pressed="true">AZ</button>
+            <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Qara fon">
+            <svg data-theme-icon><use href="#icon-moon" /></svg>
+            <span data-theme-label>Qara fon</span>
+          </button>
+        </div>
+        <a class="mobile-cta" href="#booking" data-i18n="action.request">Sorğu göndər</a>
+        <a class="mobile-instagram" href="https://www.instagram.com/avakhyl/" target="_blank" rel="noopener">
+          <svg><use href="#icon-instagram" /></svg>
+          <span data-i18n="action.instagram">Instagram</span>
+        </a>
+      </div>
+    </div>
+
+    <main id="home">
+      <section class="hero">
+        <img class="hero-image" src="assets/avakhyl-hero-landscape.webp" srcset="assets/avakhyl-hero-landscape-s.webp 900w, assets/avakhyl-hero-landscape.webp 1536w" sizes="100vw" fetchpriority="high" alt="Avaxıl kəndinin dağ mənzərəsi" data-i18n-alt="alt.hero" />
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+          <div class="hero-copy reveal">
+            <p class="eyebrow" data-i18n="brand.by">by Epoxy Azerbaijan Co.</p>
+            <h1>Avakhyl</h1>
+            <p class="location-pill">
+              <svg><use href="#icon-map" /></svg>
+              <span data-i18n="hero.location">Şamaxı, Avaxıl kəndi</span>
+            </p>
+            <p class="hero-lead" data-i18n="hero.lead">
+              Təbiətin içində sakit ev rahatlığı, özəl məkan hissi və şəhər ritmindən yumşaq fasilə.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#booking">
+                <span data-i18n="action.booking">Rezervasiya sorğusu</span>
+                <svg><use href="#icon-arrow" /></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-notes reveal" aria-label="Avakhyl əsas üstünlükləri" data-i18n-aria="aria.benefits">
+            <div>
+              <strong data-i18n="note.private.title">Özəl</strong>
+              <span data-i18n="note.private.text">ayrı giriş və sakit zona</span>
+            </div>
+            <div>
+              <strong data-i18n="note.natural.title">Təbii</strong>
+              <span data-i18n="note.natural.text">Şamaxı dağ kəndi atmosferi</span>
+            </div>
+            <div>
+              <strong data-i18n="note.comfort.title">Rahat</strong>
+              <span data-i18n="note.comfort.text">loft interyer, balkon və Wi-Fi</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="booking-panel search-panel reveal" id="booking" data-booking-form>
+          <label class="booking-field home-select-field">
+            <span class="booking-choice">
+              <svg><use href="#icon-map" /></svg>
+              <span class="search-select">
+                <small data-i18n="aria.homeSelect">Evi seç</small>
+                <select name="home" data-home-select aria-label="Evi seç" data-i18n-aria="aria.homeSelect">
+                <option value="qaya" data-house-option>Qaya 🏔️</option>
+                <option value="ardic" data-house-option>Ardıc 🌳</option>
+                <option value="palid" data-house-option>Palıd 🌲</option>
+                <option value="glamp4" data-house-option>Glamphouse böyük (4 nəfərlik)</option>
+                <option value="glamp2" data-house-option>Glamphouse kiçik (2 nəfərlik)</option>
+                </select>
+              </span>
+            </span>
+          </label>
+
+          <button class="booking-submit" type="submit">
+            <span data-i18n="action.prepare">Evlərə bax</span>
+          </button>
+        </form>
+      </section>
+
+      <section class="section homes-section" id="homes">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow" data-i18n="homes.eyebrow">Evlər</p>
+            <h2 data-i18n="homes.title">Avakhyl evləri</h2>
+            <p data-i18n="homes.text">
+              Şamaxı, Avaxıl kəndində beş ev seçimi: Qaya, Ardıc, Palıd, Glamphouse böyük və Glamphouse kiçik. Hər evin səhifəsində ayrıca foto və video qalereyası var.</p>
+          </div>
+
+          <div class="home-grid">
+            <article class="stay-card reveal is-selected" data-cottage-card="qaya">
+              <img src="assets/qaya/qaya-01.webp" alt="Qaya evinin daş fasadı və balkonu" data-i18n-alt="alt.qaya" />
+              <div class="stay-card-body">
+                <span class="stay-kicker" data-i18n="card.one.kicker">Dağ mənzərəsi</span>
+                <h3 data-i18n="card.one.title">Qaya 🏔️</h3>
+                <p data-i18n="card.one.text">Dağ havası, geniş baxış və sakit səhər ritmi.</p>
+                <strong class="price-line" data-i18n="price.qaya.summary">2-3 nəfər: 90 AZN-dən</strong>
+                <button type="button" data-select-cottage="qaya">
+                  <span data-i18n="action.select">Seç</span>
+                  <svg><use href="#icon-arrow" /></svg>
+                </button>
+              </div>
+            </article>
+
+            <article class="stay-card reveal" data-cottage-card="ardic">
+              <img src="assets/ardic/ardic-01.webp" alt="Ardıc evinin yataq otağı" data-i18n-alt="alt.ardic" />
+              <div class="stay-card-body">
+                <span class="stay-kicker" data-i18n="card.two.kicker">Meşə sakitliyi</span>
+                <h3 data-i18n="card.two.title">Ardıc 🌳</h3>
+                <p data-i18n="card.two.text">Loft / Industrial interyer və yaşıl mənzərəyə açılan balkon.</p>
+                <strong class="price-line" data-i18n="price.ardic.summary">2-3 nəfərlik: 60 AZN</strong>
+                <button type="button" data-select-cottage="ardic">
+                  <span data-i18n="action.select">Seç</span>
+                  <svg><use href="#icon-arrow" /></svg>
+                </button>
+              </div>
+            </article>
+
+            <article class="stay-card reveal" data-cottage-card="palid">
+              <img src="assets/palid/palid-01.webp" alt="Palıd evinin qonaq otağı" data-i18n-alt="alt.palid" />
+              <div class="stay-card-body">
+                <span class="stay-kicker" data-i18n="card.three.kicker">Ailə rahatlığı</span>
+                <h3 data-i18n="card.three.title">Palıd 🌲</h3>
+                <p data-i18n="card.three.text">Tam təchizatlı mətbəx, smart TV, Netflix, YouTube və Fiber Wi-Fi.</p>
+                <strong class="price-line" data-i18n="price.palid.summary">2-3 nəfərlik: 60 AZN</strong>
+                <button type="button" data-select-cottage="palid">
+                  <span data-i18n="action.select">Seç</span>
+                  <svg><use href="#icon-arrow" /></svg>
+                </button>
+              </div>
+            </article>
+
+            <article class="stay-card reveal" data-cottage-card="glamp4">
+              <img src="assets/glamp4/glamp4-01.webp" alt="Glamphouse böyük günbəzinin içi" data-i18n-alt="alt.glamp4" loading="lazy" />
+              <div class="stay-card-body">
+                <span class="stay-kicker" data-i18n="card.four.kicker">Glamping günbəzi</span>
+                <h3 data-i18n="card.four.title">Glamphouse böyük (4 nəfərlik)</h3>
+                <p data-i18n="card.four.text">Panoram pəncərə, mini mətbəx, kondisioner və terras.</p>
+                <strong class="price-line" data-i18n="price.glamp4.summary">4 nəfərə qədər: 130 AZN</strong>
+                <button type="button" data-select-cottage="glamp4">
+                  <span data-i18n="action.select">Seç</span>
+                  <svg><use href="#icon-arrow" /></svg>
+                </button>
+              </div>
+            </article>
+
+            <article class="stay-card reveal" data-cottage-card="glamp2">
+              <img src="assets/glamp2/glamp2-01.webp" alt="Glamphouse kiçik günbəzinin içi" data-i18n-alt="alt.glamp2" loading="lazy" />
+              <div class="stay-card-body">
+                <span class="stay-kicker" data-i18n="card.five.kicker">Cütlüklər üçün</span>
+                <h3 data-i18n="card.five.title">Glamphouse kiçik (2 nəfərlik)</h3>
+                <p data-i18n="card.five.text">İki nəfərlik yataq, panoram pəncərə və kondisioner.</p>
+                <strong class="price-line" data-i18n="price.glamp2.summary">2 nəfərə qədər: 60 AZN</strong>
+                <button type="button" data-select-cottage="glamp2">
+                  <span data-i18n="action.select">Seç</span>
+                  <svg><use href="#icon-arrow" /></svg>
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section experience-section agach-section" id="agach">
+        <div class="container split-layout">
+          <div class="experience-copy reveal">
+            <img class="agach-logo" src="assets/agach/agach-logo.webp" alt="AGACH Interiors" />
+            <h2 data-i18n="experience.title">Kotecelərin interyeri AGACH tərəfindən hazırlanıb.</h2>
+            <div class="feature-list">
+              <span><svg><use href="#icon-leaf" /></svg> <span data-i18n="feature.one">AGACH Interiors konseptual dizaynı</span></span>
+              <span><svg><use href="#icon-shield" /></svg> <span data-i18n="feature.two">Loft / Industrial üslubda isti interyer</span></span>
+              <span><svg><use href="#icon-fire" /></svg> <span data-i18n="feature.three">Hər ev üçün özəl dizayner detalları</span></span>
+            </div>
+          </div>
+
+          <div class="agach-fan reveal" data-fan-carousel aria-label="AGACH interyer qalereyası">
+            <div class="fan-layout" data-fan-track>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-01.webp" alt="AGACH balkon və dağ mənzərəsi" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-02.webp" alt="AGACH açıq dolab və güzgü dizaynı" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-03.webp" alt="AGACH Ardıc taxta lövhə detalı" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-04.webp" alt="AGACH Palıd qonaq otağı" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-05.webp" alt="AGACH canlı taxta bar masası" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-06.webp" alt="AGACH mətbəx dəzgahı" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-07.webp" alt="AGACH loft mətbəx və işıqlandırma" />
+              </button>
+              <button class="fan-card" type="button" data-fan-card>
+                <img src="assets/agach/agach-08.webp" alt="AGACH taxta işıq detalı" />
+              </button>
+            </div>
+            <div class="fan-controls" aria-label="AGACH qalereya idarəetməsi">
+              <button class="fan-arrow" type="button" data-fan-prev aria-label="Əvvəlki">
+                <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+              <div class="fan-dots" data-fan-dots></div>
+              <button class="fan-arrow" type="button" data-fan-next aria-label="Sonrakı">
+                <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section flow-section">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow" data-i18n="flow.eyebrow">Rezervasiya axını</p>
+            <h2 data-i18n="flow.title">Dörd addımda Avakhyl sorğusu</h2>
+          </div>
+          <div class="flow-grid">
+            <div class="flow-step reveal">
+              <span>01</span>
+              <h3 data-i18n="flow.one.title">Evi seç</h3>
+              <p data-i18n="flow.one.text">Qaya, Ardıc, Palıd, Glamphouse böyük və ya kiçik seçimlərindən birini seç.</p>
+            </div>
+            <div class="flow-step reveal">
+              <span>02</span>
+              <h3 data-i18n="flow.two.title">Tarixi əlavə et</h3>
+              <p data-i18n="flow.two.text">Giriş və çıxış tarixlərini qeyd et.</p>
+            </div>
+            <div class="flow-step reveal">
+              <span>03</span>
+              <h3 data-i18n="flow.three.title">Şəxsi məlumatları qeyd et</h3>
+              <p data-i18n="flow.three.text">Ad, soyad, əlaqə və digər lazımi məlumatları əlavə et.</p>
+            </div>
+            <div class="flow-step reveal">
+              <span>04</span>
+              <h3 data-i18n="flow.four.title">Təsdiq gözlə</h3>
+              <p data-i18n="flow.four.text">Komanda yoxlayıb geri dönüş edir və rezervasiyan hazır olur.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section notes-section" id="notes">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow" data-i18n="notes.eyebrow">Vacib qeydlər</p>
+            <h2 data-i18n="notes.title">Girişdən əvvəl bilinməli olanlar</h2>
+            <p data-i18n="notes.text">Bu qaydalar evlərin qorunması və qonaqların rahat qalması üçün tətbiq olunur.</p>
+          </div>
+
+          <div class="notice-grid">
+            <article class="notice-card reveal">
+              <span>01</span>
+              <p data-i18n="notes.one">Check-in zamanı 50 AZN depozit tələb olunur. Depozit girişdə ödənilir və çıxışda geri qaytarılır.</p>
+            </article>
+            <article class="notice-card reveal">
+              <span>02</span>
+              <p data-i18n="notes.two">
+                İstisnasız qaydada 18 yaş üstü bütün qonaqlarımız şəxsiyyət vəsiqəsini təqdim etməlidir.
+              </p>
+            </article>
+            <article class="notice-card reveal">
+              <span>03</span>
+              <p data-i18n="notes.three">
+                Qeyd olunan məbləğlərə manqal və samovar seti daxildir.
+              </p>
+            </article>
+            <article class="notice-card notice-card--pets reveal">
+              <span>04</span>
+              <div class="notice-body">
+                <strong data-i18n="notes.petsTitle">Ev heyvanlarının qəbulu qaydaları</strong>
+                <p data-i18n="notes.four">Evlərə yalnız kiçik ölçülü ev heyvanlarının gətirilməsinə icazə verilir. Heyvanlar qonağın nəzarəti altında olmalıdır.</p>
+                <p data-i18n="notes.fourB">Aqressiv və təhlükə yarada biləcək heyvanların, o cümlədən doberman, alman ovçarkası, pitbull və rotveyler cinslərinin qəbulu qadağandır.</p>
+                <p data-i18n="notes.fourC">Hər evə maksimum 2 ev heyvanı qəbul edilir.</p>
+              </div>
+            </article>
+            <article class="notice-card reveal">
+              <span>05</span>
+              <p data-i18n="notes.five">20 oktyabrdan 20 marta qədər hər gecə üçün +20 AZN istilik ödənişi alınır.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <div class="container split-layout faq-layout">
+          <div class="faq-intro reveal">
+            <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
+            <h2 data-i18n="faq.title">Ən çox soruşulanlar</h2>
+            <p data-i18n="faq.text">Avakhyl haqqında əsas cavablar burada toplanıb.</p>
+          </div>
+
+          <div class="faq-list reveal" data-faq-list></div>
+        </div>
+      </section>
+
+      <section class="closing-band">
+        <div class="container closing-content reveal">
+          <div>
+            <p class="eyebrow">Avakhyl</p>
+            <h2 data-i18n="closing.title">Təbiətə yaxın, qərar verməyə asan.</h2>
+          </div>
+          <div class="closing-actions">
+            <a class="primary-button dark" href="#booking">
+              <span data-i18n="action.start">Sorğuya başla</span>
+              <svg><use href="#icon-arrow" /></svg>
+            </a>
+            <a
+              class="secondary-link"
+              href="https://www.instagram.com/avakhyl/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg><use href="#icon-instagram" /></svg>
+              <span data-i18n="action.instagram">Instagram</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <img src="assets/avakhyl-logo.webp" alt="Avakhyl" data-brand-logo data-logo-light="assets/avakhyl-logo.webp" data-logo-dark="assets/avakhyl-logo.webp" loading="lazy" />
+          <div>
+            <strong>Avakhyl</strong>
+            <span data-i18n="brand.by">by Epoxy Azerbaijan Co.</span>
+          </div>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.address">Ünvan</span>
+          <a href="https://maps.google.com/?q=40.80,48.567" target="_blank" rel="noopener" data-i18n="footer.village">Şamaxı rayonu, Avaxıl kəndi</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.contact">Əlaqə</span>
+          <a href="https://wa.me/994552625633" target="_blank" rel="noopener">WhatsApp: +994 55 262 56 33</a>
+          <a href="https://www.instagram.com/avakhyl/" target="_blank" rel="noopener">Instagram: @avakhyl</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.pages">Səhifələr</span>
+          <a href="#homes" data-i18n="footer.homes">Evlər</a>
+          <a data-carry-params="avaxil.html" href="avaxil.html" data-i18n="nav.avaxil">Avaxıl haqqında</a>
+          <a href="#faq">FAQ</a>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span data-i18n="footer.rights">© 2026 Avakhyl. Bütün hüquqlar qorunur.</span>
+        <a href="#home" data-i18n="action.top">Yuxarı</a>
+      </div>
+    </footer>
+
+    <a class="wa-float" href="https://wa.me/994552625633" target="_blank" rel="noopener" aria-label="WhatsApp ilə yazın" data-i18n-aria="wa.label">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
+    </a>
+
+    <div class="modal guest-modal" data-modal aria-hidden="true">
+      <div class="modal-panel guest-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="icon-button modal-close" type="button" aria-label="Bağla" data-i18n-aria="aria.close" data-modal-close>
+          <svg><use href="#icon-close" /></svg>
+        </button>
+        <div class="guest-modal-header">
+          <h2 id="modal-title" data-i18n="guest.title">Qonaq sayını əlavə et</h2>
+        </div>
+        <div class="guest-rows">
+          <div class="guest-row">
+            <div>
+              <strong data-i18n="guest.adults">Böyük</strong>
+            </div>
+            <div class="guest-stepper">
+              <button type="button" data-guest-step="adults" data-step="-1" aria-label="Böyük sayını azalt">−</button>
+              <output data-guest-count="adults">1</output>
+              <button type="button" data-guest-step="adults" data-step="1" aria-label="Böyük sayını artır">+</button>
+            </div>
+          </div>
+          <div class="guest-row">
+            <div>
+              <strong data-i18n="guest.children">Uşaq</strong>
+              <span data-i18n="guest.childrenAge">3-12 yaş</span>
+            </div>
+            <div class="guest-stepper">
+              <button type="button" data-guest-step="children" data-step="-1" aria-label="Uşaq sayını azalt">−</button>
+              <output data-guest-count="children">0</output>
+              <button type="button" data-guest-step="children" data-step="1" aria-label="Uşaq sayını artır">+</button>
+            </div>
+          </div>
+          <div class="guest-row">
+            <div>
+              <strong data-i18n="guest.pets">Ev heyvanı</strong>
+              <span data-i18n="guest.petsNote">Yalnız kiçik ölçülü, maksimum 2</span>
+            </div>
+            <div class="guest-stepper">
+              <button type="button" data-guest-step="pets" data-step="-1" aria-label="Ev heyvanı sayını azalt">−</button>
+              <output data-guest-count="pets">0</output>
+              <button type="button" data-guest-step="pets" data-step="1" aria-label="Ev heyvanı sayını artır">+</button>
+            </div>
+          </div>
+          <p class="pets-info" data-pets-info hidden data-i18n="guest.petsInfo">Yalnız kiçik ölçülü ev heyvanları qəbul edilir (hər evə maksimum 2). Heyvanlar qonağın nəzarəti altında olmalıdır. Doberman, alman ovçarkası, pitbull və rotveyler cinsləri qəbul edilmir.</p>
+        </div>
+        <div class="guest-modal-footer">
+          <button class="guest-calculate" type="button" data-guest-calculate data-i18n="guest.calculate">HESABLA</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="settings.js?v=20261118-8"></script>
+    <script src="script.js?v=20261118-8"></script>
+  </body>
+</html>

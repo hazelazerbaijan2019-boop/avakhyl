@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avakhyl | Rezervasiya</title>
+    <meta name="description" content="Avakhyl rezervasiya məlumatları" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+    <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="styles.css?v=20261118-8" />
+  </head>
+  <body>
+    <svg class="sprite" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+        <path d="M3.6 9h16.8M3.6 15h16.8M12 3c2.2 2.3 3.4 5.4 3.4 9S14.2 18.7 12 21c-2.2-2.3-3.4-5.4-3.4-9S9.8 5.3 12 3Z" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </symbol>
+      <symbol id="icon-instagram" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
+        <path d="M17.5 6.5h.01" />
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </symbol>
+    </svg>
+
+    <header class="site-header house-site-header" data-header>
+      <a class="brand" href="index.html#home" aria-label="Avakhyl">
+        <img
+          src="assets/avakhyl-logo.webp"
+          alt="Avakhyl"
+          data-brand-logo
+          data-logo-light="assets/avakhyl-logo.webp"
+          data-logo-dark="assets/avakhyl-logo.webp"
+        />
+      </a>
+
+      <nav class="desktop-nav house-nav" aria-label="Rezervasiya naviqasiyası">
+        <a data-carry-params="index.html#homes" href="index.html#homes" data-i18n="nav.homes">Evlər</a>
+        <a data-carry-params="avaxil.html" href="avaxil.html" data-i18n="nav.avaxil">Avaxıl haqqında</a>
+        <a data-carry-params="index.html#faq" href="index.html#faq">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switcher" aria-label="Dil seçimi">
+          <svg><use href="#icon-globe" /></svg>
+          <button type="button" data-lang="az" aria-pressed="true">AZ</button>
+          <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Qara fon">
+          <svg data-theme-icon><use href="#icon-moon" /></svg>
+          <span data-theme-label>Qara fon</span>
+        </button>
+        <a
+          class="icon-button instagram-button"
+          href="https://www.instagram.com/avakhyl/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Avakhyl Instagram"
+        >
+          <svg><use href="#icon-instagram" /></svg>
+        </a>
+      </div>
+    </header>
+
+    <main class="reservation-page">
+      <section class="section reservation-form-section reservation-page-section">
+        <div class="container reservation-form-layout">
+          <form class="reservation-form-card" data-reservation-form>
+            <a class="back-link reservation-back" href="house.html" data-back-link>
+              <svg><use href="#icon-arrow" /></svg>
+              <span data-i18n="action.back">Geri</span>
+            </a>
+            <p class="eyebrow" data-i18n="reservation.eyebrow">Rezervasiya</p>
+            <h2 data-i18n="reservation.formTitle">Rezervasiya məlumatları</h2>
+            <div class="form-two">
+              <input type="text" name="firstName" data-i18n-placeholder="reservation.firstName" placeholder="Adınız" required />
+              <input type="text" name="lastName" data-i18n-placeholder="reservation.lastName" placeholder="Soyadınız" required />
+            </div>
+            <input type="email" name="email" data-i18n-placeholder="reservation.email" placeholder="Gmail" required />
+            <input type="tel" name="phone" data-i18n-placeholder="reservation.phone" placeholder="+994 mobil nömrə" required />
+            <button class="reservation-submit" type="submit" data-i18n="reservation.continue">Davam Et</button>
+          </form>
+
+          <aside class="booking-sidebar">
+            <div class="booking-info-card">
+              <h3 data-i18n="reservation.infoTitle">Rezervasiya məlumatları</h3>
+              <div><span data-i18n="reservation.home">Ev</span><strong data-form-home>Qaya</strong></div>
+              <div><span data-i18n="reservation.checkin">Giriş tarixi</span><strong data-form-checkin>Tarix seçin</strong></div>
+              <div><span data-i18n="reservation.checkout">Çıxış tarixi</span><strong data-form-checkout>Tarix seçin</strong></div>
+              <div><span data-i18n="reservation.nightCount">Cəmi gecə sayı</span><strong data-form-nights>0 gecə</strong></div>
+              <div><span data-i18n="reservation.guests">Qonaqlar</span><strong data-form-guests>1 böyük</strong></div>
+            </div>
+            <div class="booking-info-card">
+              <p class="checkin-times" data-i18n="reservation.times">Giriş 14:00-dan, çıxış 12:00-dək</p>
+              <h3 data-i18n="reservation.priceDetails">Qiymət təfərrüatları</h3>
+              <div><span data-form-night-line>0 gecə</span><strong data-form-night-total>0 ₼</strong></div>
+              <div data-discount-row hidden><span data-i18n="reservation.discount">Endirim (3+ gecə, 10%)</span><strong data-form-discount>−0 ₼</strong></div>
+              <div data-heating-row hidden><span data-i18n="reservation.heating">İstilik ödənişi (20 okt – 20 mart)</span><strong data-form-heating>+0 ₼</strong></div>
+              <div data-promo-row hidden><span data-promo-label>Promokod</span><strong data-promo-amount>−0 ₼</strong></div>
+              <div class="summary-total"><span data-i18n="reservation.total">Cəmi</span><strong data-form-total>0 ₼</strong></div>
+              <div class="summary-prepay"><span data-i18n="reservation.prepay">Beh (50%) — əməkdaşımız əlaqə saxlayıb qəbul edəcək</span><strong data-prepay-amount>0 ₼</strong></div>
+              <div class="summary-rest"><span data-i18n="reservation.rest">Qalığı — girişdə ödənilir</span><strong data-rest-amount>0 ₼</strong></div>
+              <div class="summary-deposit"><span data-i18n="reservation.deposit">Depozit (girişdə ödənilir, çıxışda qaytarılır)</span><strong data-deposit-amount>50 ₼</strong></div>
+              <div class="promo-box" data-promo-box>
+                <label for="promo-code" data-i18n="promo.label">Promokod</label>
+                <div class="promo-field">
+                  <input id="promo-code" type="text" autocomplete="off" autocapitalize="characters" maxlength="20" data-promo-input data-i18n-placeholder="promo.placeholder" placeholder="Promokodu daxil edin" />
+                  <button type="button" data-promo-apply data-i18n="promo.apply">Tətbiq et</button>
+                </div>
+                <p class="promo-status" data-promo-status aria-live="polite"></p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <img src="assets/avakhyl-logo.webp" alt="Avakhyl" data-brand-logo data-logo-light="assets/avakhyl-logo.webp" data-logo-dark="assets/avakhyl-logo.webp" loading="lazy" />
+          <div>
+            <strong>Avakhyl</strong>
+            <span data-i18n="brand.by">by Epoxy Azerbaijan Co.</span>
+          </div>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.address">Ünvan</span>
+          <a href="https://maps.google.com/?q=40.80,48.567" target="_blank" rel="noopener" data-i18n="footer.village">Şamaxı rayonu, Avaxıl kəndi</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.contact">Əlaqə</span>
+          <a href="https://wa.me/994552625633" target="_blank" rel="noopener">WhatsApp: +994 55 262 56 33</a>
+          <a href="https://www.instagram.com/avakhyl/" target="_blank" rel="noopener">Instagram: @avakhyl</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-label" data-i18n="footer.pages">Səhifələr</span>
+          <a data-carry-params="index.html#homes" href="index.html#homes" data-i18n="footer.homes">Evlər</a>
+          <a data-carry-params="avaxil.html" href="avaxil.html" data-i18n="nav.avaxil">Avaxıl haqqında</a>
+          <a data-carry-params="index.html#faq" href="index.html#faq">FAQ</a>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span data-i18n="footer.rights">© 2026 Avakhyl. Bütün hüquqlar qorunur.</span>
+        <a href="#" data-i18n="action.top">Yuxarı</a>
+      </div>
+    </footer>
+
+    <a class="wa-float" href="https://wa.me/994552625633" target="_blank" rel="noopener" aria-label="WhatsApp ilə yazın" data-i18n-aria="wa.label">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
+    </a>
+
+    <div class="reservation-warning-modal" data-reservation-warning aria-hidden="true">
+      <div class="reservation-warning-panel" role="dialog" aria-modal="true" aria-labelledby="reservation-warning-title">
+        <button class="modal-close" type="button" data-warning-close aria-label="Bağla">
+          <svg><use href="#icon-x" /></svg>
+        </button>
+        <h2 id="reservation-warning-title" data-i18n="reservation.warningTitle">Xəbərdarlıq</h2>
+        <p data-i18n="reservation.warningText">Bu sorğunu göndərməklə rezervasiya prosesini başladırsınız. Sorğunuz yoxlanıldıqdan sonra əməkdaşımız sizinlə əlaqə saxlayacaq və ümumi məbləğin 50%-ni beh olaraq qəbul edəcək — rezervasiya beh ödənildikdən sonra təsdiqlənir. Qalığı girişdə ödənilir. Rezervasiya ləğv olunarsa, beh geri qaytarılmır.</p>
+        <p class="pets-info" data-pets-info hidden data-i18n="reservation.petsInfo">Yalnız kiçik ölçülü ev heyvanları qəbul edilir (hər evə maksimum 2). Heyvanlar qonağın nəzarəti altında olmalıdır. Doberman, alman ovçarkası, pitbull və rotveyler cinsləri qəbul edilmir.</p>
+        <label class="warning-accept">
+          <input type="checkbox" data-warning-accept />
+          <span data-i18n="reservation.accept">Təsdiq edirəm</span>
+        </label>
+        <button class="reservation-submit" type="button" data-warning-send disabled data-i18n="reservation.send">Göndər</button>
+      </div>
+    </div>
+
+    <script src="settings.js?v=20261118-8"></script>
+    <script src="reservation.js?v=20261118-8"></script>
+  </body>
+</html>

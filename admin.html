@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avakhyl | Rəhbər paneli</title>
+    <meta name="description" content="Avakhyl rəhbər rezervasiya paneli" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+    <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="styles.css?v=20261118-8" />
+  </head>
+  <body>
+    <svg class="sprite" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24">
+        <path d="M8 2v4M16 2v4M3 10h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </symbol>
+    </svg>
+
+    <main class="admin-page">
+      <section class="admin-hero">
+        <div class="container admin-shell">
+          <header class="admin-topbar">
+            <a class="brand admin-brand" href="index.html#home" aria-label="Avakhyl">
+              <img
+                src="assets/avakhyl-logo.webp"
+                alt="Avakhyl"
+                data-brand-logo
+                data-logo-light="assets/avakhyl-logo.webp"
+                data-logo-dark="assets/avakhyl-logo.webp"
+              />
+            </a>
+            <div class="admin-topbar-actions">
+              <button class="theme-toggle admin-theme-toggle" type="button" data-theme-toggle aria-label="Qara fon">
+                <svg data-theme-icon><use href="#icon-moon" /></svg>
+                <span data-theme-label>Qara fon</span>
+              </button>
+              <a class="secondary-link admin-site-link" href="index.html#homes">
+                Sayta bax
+                <svg><use href="#icon-arrow" /></svg>
+              </a>
+            </div>
+          </header>
+
+          <div class="admin-heading">
+            <p class="eyebrow">AVAKHYL rəhbər paneli</p>
+            <h1>Rezerv tarixlərini idarə et</h1>
+            <p>Evə klik edin və kalendarda <strong>dolu gecələri</strong> seçin. Məsələn, qonaq 10 dekabrda girib 12 dekabrda çıxırsa, 10 və 11 dekabrı seçin — 12 dekabr boş qalır, çünki çıxış 12:00-da, növbəti giriş 14:00-dadır.</p>
+          </div>
+
+          <div class="admin-home-grid" data-admin-homes>
+            <button class="admin-home-card" type="button" data-admin-home="qaya">
+              <span>01</span>
+              <strong>Qaya 🏔️</strong>
+              <em data-admin-count="qaya">0 tarix</em>
+            </button>
+            <button class="admin-home-card" type="button" data-admin-home="ardic">
+              <span>02</span>
+              <strong>Ardıc 🌳</strong>
+              <em data-admin-count="ardic">0 tarix</em>
+            </button>
+            <button class="admin-home-card" type="button" data-admin-home="palid">
+              <span>03</span>
+              <strong>Palıd 🌲</strong>
+              <em data-admin-count="palid">0 tarix</em>
+            </button>
+            <button class="admin-home-card" type="button" data-admin-home="glamp4">
+              <span>04</span>
+              <strong>Glamphouse böyük (4 nəfərlik)</strong>
+              <em data-admin-count="glamp4">0 tarix</em>
+            </button>
+            <button class="admin-home-card" type="button" data-admin-home="glamp2">
+              <span>05</span>
+              <strong>Glamphouse kiçik (2 nəfərlik)</strong>
+              <em data-admin-count="glamp2">0 tarix</em>
+            </button>
+          </div>
+
+          <section class="admin-calendar-panel" data-admin-panel hidden>
+            <div class="admin-calendar-head">
+              <div>
+                <p class="eyebrow">Tarix paneli</p>
+                <h2 data-admin-title>Qaya 🏔️</h2>
+                <p data-admin-summary>Rezerv tarixlərini seçin.</p>
+              </div>
+              <div class="calendar-controls">
+                <button class="calendar-arrow" type="button" data-admin-prev aria-label="Əvvəlki ay">‹</button>
+                <button class="calendar-arrow" type="button" data-admin-next aria-label="Növbəti ay">›</button>
+              </div>
+            </div>
+
+            <div class="admin-calendar-months" data-admin-calendar></div>
+
+            <div class="admin-actions">
+              <button class="reservation-submit" type="button" data-admin-save>Rezervi təsdiqlə</button>
+              <button class="admin-clear-button" type="button" data-admin-clear>Bu evin tarixlərini təmizlə</button>
+              <span data-admin-status></span>
+            </div>
+          </section>
+
+          <section class="admin-calendar-panel admin-settings" data-settings-panel>
+            <div class="admin-calendar-head">
+              <div>
+                <p class="eyebrow">Qiymətlər və qaydalar</p>
+                <h2>Qiymət ayarları</h2>
+                <p>Rəqəmləri dəyişib "Yadda saxla" düyməsinə basın. Saytdakı qiymət cədvəli, kalendar, hesablama, qeydlər və WhatsApp mesajı yeni dəyərlərlə işləyəcək.</p>
+              </div>
+            </div>
+
+            <form class="admin-settings-grid" data-settings-form novalidate></form>
+
+            <div class="admin-specials">
+              <div class="admin-specials-head">
+                <div>
+                  <h3>Bayram və xüsusi günlər</h3>
+                  <p>Seçilən tarixlərdə gecə qiyməti dəyişir: sabit qiymət, endirim və ya artım. Tarixlər üst-üstə düşərsə, siyahıda yuxarıdakı qayda tətbiq olunur.</p>
+                </div>
+                <div class="admin-specials-add">
+                  <select data-special-preset aria-label="Hazır bayram seçin"></select>
+                  <button class="admin-clear-button" type="button" data-special-add>+ Əlavə et</button>
+                </div>
+              </div>
+              <div class="admin-specials-list" data-specials-list></div>
+            </div>
+
+            <div class="admin-specials">
+              <div class="admin-specials-head">
+                <div>
+                  <h3>Promokodlar</h3>
+                  <p>Qonaq rezervasiya zamanı promokodu daxil edir və təyin etdiyiniz endirimi alır. Qeyd yalnız sizin üçündür, saytda görünmür.</p>
+                </div>
+                <div class="admin-specials-add">
+                  <button class="admin-clear-button" type="button" data-promo-add>+ Promokod yarat</button>
+                </div>
+              </div>
+              <div class="admin-specials-list" data-promos-list></div>
+            </div>
+
+            <div class="admin-specials">
+              <div class="admin-specials-head">
+                <div>
+                  <h3>İstifadə olunmuş promokodlar (arxiv)</h3>
+                  <p>Hər promokod yalnız bir dəfə istifadə oluna bilər. WhatsApp-dan promokodlu rezervasiya gələndə və onu təsdiqlədikdə, aktiv promokodun kartında "İstifadə olundu" düyməsinə basın — kod saytda bağlanır və buraya düşür.</p>
+                </div>
+              </div>
+              <div class="admin-archive" data-promo-archive></div>
+            </div>
+
+            <div class="admin-actions">
+              <button class="reservation-submit" type="button" data-settings-save>Yadda saxla</button>
+              <button class="admin-clear-button" type="button" data-settings-reset>Standart dəyərlərə qaytar</button>
+              <span data-settings-status></span>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="settings.js?v=20261118-8"></script>
+    <script src="admin.js?v=20261118-8"></script>
+  </body>
+</html>
