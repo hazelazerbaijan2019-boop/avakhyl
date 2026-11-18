@@ -4,11 +4,6 @@ const selectedHome = params.get("home") || "qaya";
 // qonaq limitləri rəhbər panelindən (settings.js); yalnız böyüklər sayılır, uşaqlar limitə daxil deyil
 const maxFor = (key) => (key === "adults" ? homeRules(selectedHome).maxAdults : key === "pets" ? homeRules(selectedHome).maxPets : Infinity);
 const minFor = (key) => (key === "adults" ? homeRules(selectedHome).minAdults : 0);
-localStorage.removeItem("avakhylBookedDates");
-
-const bookedDatesStorageKey = "avakhylBookedDatesV2";
-const bookedDatesVersionKey = "avakhylBookedDatesVersion";
-const bookingChannel = "BroadcastChannel" in window ? new BroadcastChannel("avakhylBookingDates") : null;
 const lightbox = document.querySelector("[data-lightbox]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxClose = document.querySelector("[data-lightbox-close]");
@@ -36,6 +31,7 @@ const reservationWarning = document.querySelector("[data-reservation-warning]");
 const warningClose = document.querySelector("[data-warning-close]");
 const warningAccept = document.querySelector("[data-warning-accept]");
 const warningSend = document.querySelector("[data-warning-send]");
+const bookingStatus = document.querySelector("[data-booking-status]");
 let currentLang = ["az", "ru", "en"].includes(params.get("lang")) ? params.get("lang") : "az";
 let currentTheme = params.get("theme") === "dark" ? "dark" : "light";
 
@@ -117,7 +113,7 @@ const text = {
     "reservation.priceDetails": "Qiymət təfərrüatları",
     "reservation.discount": "Endirim ({discountNights}+ gecə, {discount}%)",
     "reservation.checkoutOnly": "Yalnız çıxış",
-    "reservation.times": "Giriş 14:00-dan, çıxış 12:00-dək",
+    "reservation.times": "Giriş saatı {checkin}, çıxış saatı {checkout}",
     "reservation.pickDates": "Rezervasiya üçün əvvəlcə giriş və çıxış tarixlərini seçin.",
     "promo.label": "Promokod",
     "promo.placeholder": "Promokodu daxil edin",
@@ -212,7 +208,7 @@ const text = {
     "reservation.priceDetails": "Детали цены",
     "reservation.discount": "Скидка (от {discountNights} ночей, {discount}%)",
     "reservation.checkoutOnly": "Только выезд",
-    "reservation.times": "Заезд с 14:00, выезд до 12:00",
+    "reservation.times": "Заезд с {checkin}, выезд до {checkout}",
     "reservation.pickDates": "Сначала выберите даты заезда и выезда.",
     "promo.label": "Промокод",
     "promo.placeholder": "Введите промокод",
@@ -307,7 +303,7 @@ const text = {
     "reservation.priceDetails": "Price details",
     "reservation.discount": "Discount ({discountNights}+ nights, {discount}%)",
     "reservation.checkoutOnly": "Check-out only",
-    "reservation.times": "Check-in from 14:00, check-out by 12:00",
+    "reservation.times": "Check-in from {checkin}, check-out by {checkout}",
     "reservation.pickDates": "Choose your check-in and check-out dates first.",
     "promo.label": "Promo code",
     "promo.placeholder": "Enter promo code",
@@ -818,15 +814,10 @@ const normalizeBookedDates = (value) => ({
   palid: normalizeBookedDateList(value?.palid)
 });
 
-const getAdminBookedDates = () => {
-  try {
-    return normalizeBookedDates(JSON.parse(localStorage.getItem(bookedDatesStorageKey) || "{}"));
-  } catch {
-    return emptyBookedDates();
-  }
-};
+// dolu gecələr bazadan gəlir (admin bağladıqları + gözləyən və təsdiqlənmiş rezervlər)
+let busyNights = emptyBookedDates();
 
-const getSelectedBookedDates = () => new Set(getAdminBookedDates()[selectedHome] || []);
+const getSelectedBookedDates = () => new Set(busyNights[selectedHome] || []);
 
 const toIsoDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 const fromIsoDate = (iso) => {
@@ -885,7 +876,7 @@ const isDateReserved = (iso) => {
   return getSelectedBookedDates().has(iso);
 };
 
-// dolu tarix həmin günün gecəsidir: çıxış 12:00, giriş 14:00 olduğu üçün çıxış günü
+// dolu tarix həmin günün gecəsidir: çıxış saatı girişdən tez olduğu üçün çıxış günü
 // başqa qonağın giriş günü ola bilər; yoxlanılan gecələr girişdən çıxışdan bir gün əvvələ qədərdir
 const rangeHasUnavailableDate = (startIso, endIso) => {
   let cursor = addDays(startIso, 1);
@@ -1094,6 +1085,9 @@ const openReservationWarning = () => {
   if (warningSend) {
     warningSend.disabled = true;
   }
+  if (bookingStatus) {
+    bookingStatus.hidden = true;
+  }
   syncModalLock();
 };
 
@@ -1106,15 +1100,15 @@ const closeReservationWarning = () => {
   syncModalLock();
 };
 
-const buildWhatsAppMessage = () => {
+const buildWhatsAppMessage = (result) => {
   const home = getHome();
   const { nights, lines, discount, promo, heating, total } = getReservationMath();
   const formData = new FormData(reservationForm);
   return [
-    "Avakhyl rezervasiya sorğusu",
+    ...reservationMessageHead(result, currentLang),
     `Ev: ${home.name}`,
-    `Giriş (14:00-dan): ${formatDate(reservationState.checkin)}`,
-    `Çıxış (12:00-dək): ${formatDate(reservationState.checkout)}`,
+    `Giriş (saat ${SETTINGS.checkinTime}): ${formatDate(reservationState.checkin)}`,
+    `Çıxış (saat ${SETTINGS.checkoutTime}): ${formatDate(reservationState.checkout)}`,
     `Gecə sayı: ${nights}`,
     `Qonaqlar: ${formatGuestLine()}`,
     ...lines.map((line) => `Qiymət: ${formatCurrency(line.price)} x ${formatNightText(line.nights)}${line.label ? ` (${line.label})` : ""}`),
@@ -1427,8 +1421,16 @@ if (warningAccept && warningSend) {
     if (!warningAccept.checked) {
       return;
     }
-    const message = buildWhatsAppMessage();
-    window.location.href = `https://wa.me/994552625633?text=${encodeURIComponent(message)}`;
+    const payload = reservationPayload({
+      home: selectedHome,
+      checkin: reservationState.checkin,
+      checkout: reservationState.checkout,
+      guests: reservationState.guests,
+      form: reservationForm,
+      math: getReservationMath(),
+      lang: currentLang
+    });
+    sendReservation({ payload, buildMessage: buildWhatsAppMessage, getText, button: warningSend, statusBox: bookingStatus }).then(refreshBookingAvailability);
   });
 }
 
@@ -1480,39 +1482,25 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-let bookedDatesSnapshot = "";
-const getBookedDatesSnapshot = () => `${localStorage.getItem(bookedDatesVersionKey) || ""}:${localStorage.getItem(bookedDatesStorageKey) || ""}`;
-
-const refreshBookingAvailability = () => {
-  bookedDatesSnapshot = getBookedDatesSnapshot();
-  renderBookingFlow();
+// dolu tarixlər açılışda, səhifəyə qayıdanda və hər dəqiqə yenilənir
+const refreshBookingAvailability = async () => {
+  try {
+    busyNights = normalizeBookedDates(await fetchBusyNights());
+    renderBookingFlow();
+  } catch {
+    // internet yoxdursa son yüklənən tarixlər qalır
+  }
 };
 
-window.addEventListener("storage", (event) => {
-  if (event.key === bookedDatesStorageKey || event.key === bookedDatesVersionKey) {
-    refreshBookingAvailability();
-  }
-});
-
-bookingChannel?.addEventListener("message", (event) => {
-  if (event.data?.type === "booked-dates-updated") {
-    if (event.data.data) {
-      localStorage.setItem(bookedDatesStorageKey, JSON.stringify(normalizeBookedDates(event.data.data)));
-    }
-    if (event.data.version) {
-      localStorage.setItem(bookedDatesVersionKey, String(event.data.version));
-    }
-    refreshBookingAvailability();
-  }
-});
-
-window.addEventListener("focus", refreshBookingAvailability);
 window.addEventListener("pageshow", refreshBookingAvailability);
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     refreshBookingAvailability();
   }
 });
+window.setInterval(refreshBookingAvailability, 60000);
+
+document.addEventListener("avakhyl:settings", renderPage);
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -1529,10 +1517,6 @@ const observer = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
 setTheme(currentTheme);
 renderPage();
-bookedDatesSnapshot = getBookedDatesSnapshot();
-window.setInterval(() => {
-  const nextSnapshot = getBookedDatesSnapshot();
-  if (nextSnapshot !== bookedDatesSnapshot) {
-    refreshBookingAvailability();
-  }
-}, 1200);
+if (reservationState.promo) {
+  loadPromo(reservationState.promo).then(renderPage);
+}

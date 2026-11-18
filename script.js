@@ -166,7 +166,7 @@ const translations = {
       },
       {
         q: "Giriş və çıxış saatları necədir?",
-        a: `<p><strong>Giriş:</strong> 14:00<br /><strong>Çıxış:</strong> 12:00</p>`
+        a: `<p><strong>Giriş:</strong> {checkin}<br /><strong>Çıxış:</strong> {checkout}</p>`
       },
       {
         q: "Kənardan yemək sifariş etmək mümkündür?",
@@ -328,7 +328,7 @@ const translations = {
       },
       {
         q: "Какое время заезда и выезда?",
-        a: `<p><strong>Заезд:</strong> 14:00<br /><strong>Выезд:</strong> 12:00</p>`
+        a: `<p><strong>Заезд:</strong> {checkin}<br /><strong>Выезд:</strong> {checkout}</p>`
       },
       {
         q: "Можно ли заказать еду дополнительно?",
@@ -490,7 +490,7 @@ const translations = {
       },
       {
         q: "What are the check-in and check-out times?",
-        a: `<p><strong>Check-in:</strong> 14:00<br /><strong>Check-out:</strong> 12:00</p>`
+        a: `<p><strong>Check-in:</strong> {checkin}<br /><strong>Check-out:</strong> {checkout}</p>`
       },
       {
         q: "Can we order extra food from outside?",
@@ -970,5 +970,6 @@ window.addEventListener("scroll", setHeaderState, { passive: true });
 setSelectedCottage(selectedCottage);
 setTheme(currentTheme);
 applyLanguage(currentLang);
+document.addEventListener("avakhyl:settings", () => applyLanguage(currentLang));
 initFanCarousels();
 setHeaderState();

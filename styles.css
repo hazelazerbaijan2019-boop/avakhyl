@@ -5087,3 +5087,596 @@ h3,
 .summary-rest[hidden] {
   display: none !important;
 }
+
+/* rezerv sorğusunun göndərilmə vəziyyəti */
+.booking-status {
+  margin: 0;
+  color: var(--leaf);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.booking-status.is-error {
+  color: #c0392b;
+}
+
+/* qonağın rezervi ləğv etdiyi səhifə */
+.cancel-shell {
+  max-width: 560px;
+}
+
+.cancel-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.cancel-card h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.cancel-details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 18px;
+  margin: 0;
+}
+
+.cancel-details dt {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.cancel-details dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cancel-card .secondary-link {
+  justify-self: start;
+}
+
+/* rəhbər paneli: giriş və saytdan gələn rezerv sorğuları */
+.admin-app {
+  display: grid;
+  gap: 34px;
+}
+
+.admin-app[hidden],
+.admin-login-form[hidden],
+[data-admin-logout][hidden] {
+  display: none;
+}
+
+.admin-login {
+  max-width: 480px;
+  gap: 16px;
+}
+
+.admin-login h1,
+.admin-heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  line-height: 1;
+}
+
+.admin-login p:not(.eyebrow) {
+  margin: 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-login-status,
+[data-reservations-status] {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-tabs button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-tabs button[aria-selected="true"] {
+  border-color: var(--leaf);
+  background: var(--leaf);
+  color: #ffffff;
+}
+
+.admin-reservations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.admin-reservation {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-strong);
+  padding: 18px;
+}
+
+.admin-reservation.is-pending {
+  border-color: var(--gold);
+}
+
+.admin-reservation header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-reservation h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+
+.admin-badge {
+  border-radius: 999px;
+  background: var(--leaf-soft);
+  color: var(--leaf);
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.admin-badge.is-pending {
+  background: rgba(201, 164, 92, 0.2);
+  color: #8a6a24;
+}
+
+.admin-badge.is-closed {
+  background: var(--line);
+  color: var(--ink-soft);
+}
+
+.admin-reservation dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 14px;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.admin-reservation dt {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.admin-reservation dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.admin-reservation dd a {
+  color: var(--leaf);
+}
+
+.admin-hold {
+  margin: 0;
+  color: #8a6a24;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.admin-reservation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-reservation-actions button {
+  min-height: 40px;
+}
+
+.admin-calendar-day.is-site {
+  border-color: var(--gold);
+  background: rgba(201, 164, 92, 0.22);
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .admin-reservation {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .admin-badge.is-pending,
+[data-theme="dark"] .admin-hold {
+  color: var(--gold);
+}
+
+/* rəhbər paneli: bölmə naviqasiyası */
+.admin-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(18, 32, 15, 0.08);
+}
+
+.admin-nav a {
+  border-radius: 999px;
+  color: var(--ink);
+  padding: 8px 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.admin-nav a:hover {
+  background: var(--leaf-soft);
+  color: var(--leaf);
+}
+
+#rezervler,
+#analitika,
+#kalendar,
+#ayarlar {
+  scroll-margin-top: 90px;
+}
+
+/* rəhbər paneli: analitika */
+.analytics-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.analytics-test {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.admin-tabs[hidden] {
+  display: none;
+}
+
+.analytics-live {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-strong);
+  padding: 16px 18px;
+}
+
+.analytics-live-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.analytics-live-count strong {
+  color: var(--ink);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.analytics-live-count i {
+  align-self: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2e9b4f;
+  box-shadow: 0 0 0 0 rgba(46, 155, 79, 0.5);
+  animation: analytics-pulse 2s infinite;
+}
+
+@keyframes analytics-pulse {
+  70% {
+    box-shadow: 0 0 0 10px rgba(46, 155, 79, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 155, 79, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-live-count i {
+    animation: none;
+  }
+}
+
+.analytics-live-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.analytics-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  padding: 5px 12px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.analytics-chip b {
+  color: var(--leaf);
+}
+
+.analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.analytics-kpi {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-strong);
+  padding: 16px;
+}
+
+.analytics-kpi span {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.analytics-kpi strong {
+  color: var(--ink);
+  font-size: 1.7rem;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-kpi small {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.analytics-card {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-strong);
+  padding: 18px;
+}
+
+.analytics-wide {
+  grid-column: 1 / -1;
+}
+
+.analytics-card header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.analytics-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.analytics-card header p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.analytics-metric button {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.analytics-chart {
+  position: relative;
+}
+
+.analytics-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.analytics-grid-line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.analytics-axis {
+  fill: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.analytics-line {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.analytics-area {
+  fill: var(--leaf);
+  opacity: 0.12;
+}
+
+.analytics-bar {
+  fill: var(--leaf);
+}
+
+.analytics-hit {
+  fill: transparent;
+}
+
+.analytics-crosshair {
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.analytics-dot {
+  fill: var(--leaf);
+  stroke: var(--paper-strong);
+  stroke-width: 2;
+}
+
+.analytics-tooltip {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink-soft);
+  padding: 6px 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(18, 32, 15, 0.14);
+}
+
+.analytics-tooltip[hidden] {
+  display: none;
+}
+
+.analytics-tooltip span {
+  display: block;
+}
+
+.analytics-tooltip strong {
+  color: var(--ink);
+}
+
+.analytics-bars,
+.analytics-funnel {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analytics-bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.analytics-bar-label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.analytics-bar-label strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-bar-track {
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 4px;
+  background: var(--leaf-soft);
+}
+
+.analytics-bar-track i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--leaf);
+}
+
+.analytics-bars small,
+.analytics-funnel small {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+[data-analytics-status] {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .analytics-live,
+[data-theme="dark"] .analytics-kpi,
+[data-theme="dark"] .analytics-card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .analytics-bar-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 640px) {
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .analytics-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-kpi strong {
+    font-size: 1.3rem;
+  }
+}

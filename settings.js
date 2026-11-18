@@ -1,6 +1,8 @@
 // Avakhyl qiymət və qaydaları. Rəhbər paneli bu ayarları dəyişir; sayt bütün hesablamaları buradan oxuyur.
-// Hələlik ayarlar brauzerdə (localStorage) saxlanılır; Supabase qoşulanda ortaq bazaya keçəcək.
-const SETTINGS_STORAGE_KEY = "avakhylSettingsV1";
+// Ayarlar Supabase-də (site_settings) saxlanılır; brauzer son yüklənən nüsxəni yadda saxlayır ki, səhifə dərhal açılsın.
+const SETTINGS_CACHE_KEY = "avakhylSettingsCacheV2";
+// Supabase-dən əvvəl admin ayarları yalnız öz brauzerində saxlayırdı; admin paneli onları bir dəfə bazaya köçürür
+const LEGACY_SETTINGS_KEY = "avakhylSettingsV1";
 
 const DEFAULT_SETTINGS = {
   homes: {
@@ -21,6 +23,9 @@ const DEFAULT_SETTINGS = {
   prepayPercent: 50,
   // sorğu göndəriləndən sonra tarixlər bu qədər saat "gözləmədə" saxlanılır; beh alınmasa avtomatik açılır (Supabase mərhələsində işə düşür)
   holdHours: 2,
+  // giriş və çıxış saatları ("SS:DD"); çıxış girişdən tez olmalıdır ki, çıxış günü həmin evə yeni qonaq girə bilsin
+  checkinTime: "14:00",
+  checkoutTime: "12:00",
   // bayram və xüsusi günlər; siyahıda yuxarıdakı qayda üstündür
   specials: [],
   promoCodes: []
@@ -93,17 +98,62 @@ const mergeSettings = (base, saved) => {
   return out;
 };
 
+const isValidTime = (value) => typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+
 const loadSettings = () => {
   try {
-    return mergeSettings(DEFAULT_SETTINGS, JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}"));
+    return mergeSettings(DEFAULT_SETTINGS, JSON.parse(localStorage.getItem(SETTINGS_CACHE_KEY) || "{}"));
   } catch {
     return mergeSettings(DEFAULT_SETTINGS, {});
   }
 };
 
-const SETTINGS = loadSettings();
-const DEPOSIT = SETTINGS.deposit;
-const PREPAY_PERCENT = SETTINGS.prepayPercent;
+// köhnə və ya xarab saxlanmış saatlar standarta qaytarılır
+const fixTimes = (settings) => {
+  if (!isValidTime(settings.checkinTime) || !isValidTime(settings.checkoutTime) || settings.checkoutTime >= settings.checkinTime) {
+    settings.checkinTime = DEFAULT_SETTINGS.checkinTime;
+    settings.checkoutTime = DEFAULT_SETTINGS.checkoutTime;
+  }
+  return settings;
+};
+
+const SETTINGS = fixTimes(loadSettings());
+let DEPOSIT = SETTINGS.deposit;
+let PREPAY_PERCENT = SETTINGS.prepayPercent;
+
+// bazadan gələn ayarları tətbiq edir; promokodlar ayrıca yüklənir (loadPromo), ona görə saxlanılır
+const applySettings = (data) => {
+  const next = fixTimes(mergeSettings(DEFAULT_SETTINGS, data));
+  next.promoCodes = SETTINGS.promoCodes;
+  Object.assign(SETTINGS, next);
+  DEPOSIT = SETTINGS.deposit;
+  PREPAY_PERCENT = SETTINGS.prepayPercent;
+};
+
+// səhifə keşdəki ayarlarla dərhal açılır; bazadakı ayarlar fərqlidirsə "avakhyl:settings" hadisəsi ilə yenidən çəkilir
+const settingsReady =
+  typeof fetchSiteSettings === "function"
+    ? fetchSiteSettings()
+        .then((data) => {
+          const serialized = JSON.stringify(data);
+          if (serialized === localStorage.getItem(SETTINGS_CACHE_KEY)) return;
+          localStorage.setItem(SETTINGS_CACHE_KEY, serialized);
+          applySettings(data);
+          document.dispatchEvent(new CustomEvent("avakhyl:settings"));
+        })
+        .catch(() => {})
+    : Promise.resolve();
+
+// promokodlar ziyarətçiyə siyahı kimi verilmir: qonaq kodu yazanda yalnız həmin kodun şərtləri bazadan gəlir
+const loadPromo = async (code) => {
+  if (!code || typeof fetchPromo !== "function") return;
+  try {
+    const promo = normalizePromo(await fetchPromo(code));
+    SETTINGS.promoCodes = promo ? [promo] : [];
+  } catch {
+    SETTINGS.promoCodes = [];
+  }
+};
 const prepayFor = (total) => Math.round((total * PREPAY_PERCENT) / 100);
 
 const homeRules = (homeId) => SETTINGS.homes[homeId] ?? SETTINGS.homes.qaya;
@@ -328,6 +378,8 @@ const fillSettings = (value, lang, homeId) => {
   const vars = {
     deposit: SETTINGS.deposit,
     prepay: SETTINGS.prepayPercent,
+    checkin: SETTINGS.checkinTime,
+    checkout: SETTINGS.checkoutTime,
     heatingFee: SETTINGS.heating.fee,
     heatingUnit: (HEATING_UNIT[lang] ?? HEATING_UNIT.az)[SETTINGS.heating.mode] ?? "",
     heatingFrom: formatMonthDay(SETTINGS.heating.start, lang),
@@ -367,7 +419,11 @@ const renderPromoUi = (promo, code, getText, formatCurrency) => {
 const bindPromoInputs = (onApply) => {
   document.querySelectorAll("[data-promo-box]").forEach((box) => {
     const input = box.querySelector("[data-promo-input]");
-    const apply = () => onApply(input.value.trim().toUpperCase());
+    const apply = async () => {
+      const code = input.value.trim().toUpperCase();
+      await loadPromo(code);
+      onApply(code);
+    };
     box.querySelector("[data-promo-apply]").addEventListener("click", apply);
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
@@ -390,7 +446,14 @@ const SHARED_TEXT = {
     "footer.homes": "Evlər",
     "footer.rights": "© 2026 Avakhyl. Bütün hüquqlar qorunur.",
     "action.top": "Yuxarı",
-    "wa.label": "WhatsApp ilə yazın"
+    "wa.label": "WhatsApp ilə yazın",
+    "booking.sending": "Göndərilir...",
+    "booking.sent": "Sorğu #{n} qəbul olundu. WhatsApp açılır — mesajı göndərməyi unutmayın.",
+    "booking.taken": "Bu tarixlər artıq tutulub. Zəhmət olmasa başqa tarix seçin.",
+    "booking.promo": "Promokod artıq keçərli deyil. Onu silib yenidən göndərin.",
+    "booking.limit": "Sizin artıq bir neçə gözləyən sorğunuz var. Əməkdaşımız sizinlə əlaqə saxlayacaq.",
+    "booking.invalid": "Məlumatları yoxlayın: tarixlər, ad və əlaqə nömrəsi düzgün olmalıdır.",
+    "booking.failed": "Sorğu göndərilmədi. İnterneti yoxlayıb yenidən cəhd edin."
   },
   ru: {
     "nav.avaxil": "Об Авахыле",
@@ -402,7 +465,14 @@ const SHARED_TEXT = {
     "footer.homes": "Дома",
     "footer.rights": "© 2026 Avakhyl. Все права защищены.",
     "action.top": "Наверх",
-    "wa.label": "Написать в WhatsApp"
+    "wa.label": "Написать в WhatsApp",
+    "booking.sending": "Отправка...",
+    "booking.sent": "Запрос #{n} принят. Открывается WhatsApp — не забудьте отправить сообщение.",
+    "booking.taken": "Эти даты уже заняты. Пожалуйста, выберите другие.",
+    "booking.promo": "Промокод больше не действует. Удалите его и отправьте снова.",
+    "booking.limit": "У вас уже есть несколько ожидающих запросов. Наш сотрудник свяжется с вами.",
+    "booking.invalid": "Проверьте данные: даты, имя и номер телефона.",
+    "booking.failed": "Запрос не отправлен. Проверьте интернет и попробуйте снова."
   },
   en: {
     "nav.avaxil": "About Avaxıl",
@@ -414,7 +484,14 @@ const SHARED_TEXT = {
     "footer.homes": "Homes",
     "footer.rights": "© 2026 Avakhyl. All rights reserved.",
     "action.top": "Back to top",
-    "wa.label": "Message us on WhatsApp"
+    "wa.label": "Message us on WhatsApp",
+    "booking.sending": "Sending...",
+    "booking.sent": "Request #{n} received. WhatsApp is opening — don't forget to send the message.",
+    "booking.taken": "These dates have just been taken. Please choose other dates.",
+    "booking.promo": "The promo code is no longer valid. Remove it and send again.",
+    "booking.limit": "You already have several pending requests. Our team will contact you.",
+    "booking.invalid": "Please check the dates, your name and phone number.",
+    "booking.failed": "The request was not sent. Check your connection and try again."
   }
 };
 const sharedText = (lang, key) => SHARED_TEXT[lang]?.[key] ?? SHARED_TEXT.az[key];

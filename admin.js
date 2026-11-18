@@ -1,8 +1,6 @@
-localStorage.removeItem("avakhylBookedDates");
-
-const storageKey = "avakhylBookedDatesV2";
-const storageVersionKey = "avakhylBookedDatesVersion";
-const bookingChannel = "BroadcastChannel" in window ? new BroadcastChannel("avakhylBookingDates") : null;
+// Supabase-dən əvvəl əllə bağlanan tarixlər brauzerdə saxlanılırdı; ilk girişdə bazaya köçürülür
+const LEGACY_BOOKED_KEY = "avakhylBookedDatesV2";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const adminThemeKey = "avakhylAdminTheme";
 const html = document.documentElement;
 const homeButtons = document.querySelectorAll("[data-admin-home]");
@@ -45,19 +43,13 @@ const normalizeData = (value) => ({
   palid: normalizeDateList(value?.palid)
 });
 
-const loadSavedData = () => {
-  try {
-    return normalizeData(JSON.parse(localStorage.getItem(storageKey) || "{}"));
-  } catch {
-    return emptyData();
-  }
-};
-
 const cloneData = (value) => normalizeData(value);
 
 let selectedHome = null;
 let calendarStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-let savedData = loadSavedData();
+// savedData: bazadakı əllə bağlanmış gecələr; siteNights: saytdan gələn gözləyən və təsdiqlənmiş rezervlərin gecələri
+let savedData = emptyData();
+let siteNights = emptyData();
 let draftData = cloneData(savedData);
 let currentTheme = localStorage.getItem(adminThemeKey) === "dark" ? "dark" : "light";
 
@@ -123,22 +115,39 @@ const renderCounts = () => {
   });
 };
 
-const persistBookedDates = () => {
-  savedData = normalizeData(savedData);
-  const version = String(Date.now());
-  const serialized = JSON.stringify(savedData);
-  localStorage.setItem(storageKey, serialized);
-  localStorage.setItem(storageVersionKey, version);
-  bookingChannel?.postMessage({
-    type: "booked-dates-updated",
-    version,
-    data: savedData
-  });
+const loadBlockedNights = async () => {
+  const { data, error } = await supabaseClient.from("blocked_nights").select("home, night");
+  if (error) {
+    throw error;
+  }
+  const next = emptyData();
+  data.forEach(({ home, night }) => next[home]?.push(night));
+  savedData = normalizeData(next);
+  draftData = cloneData(savedData);
 };
 
-const reloadBookedDates = () => {
-  savedData = loadSavedData();
-  draftData = cloneData(savedData);
+// yalnız dəyişən gecələri bazaya yazır: əlavə olunanlar və silinənlər
+const persistBookedDates = async (homeKey, nextDates) => {
+  const before = new Set(savedData[homeKey]);
+  const after = new Set(nextDates);
+  const added = [...after].filter((night) => !before.has(night));
+  const removed = [...before].filter((night) => !after.has(night));
+  if (added.length) {
+    const { error } = await supabaseClient.from("blocked_nights").upsert(added.map((night) => ({ home: homeKey, night })));
+    if (error) {
+      throw error;
+    }
+  }
+  if (removed.length) {
+    const { error } = await supabaseClient.from("blocked_nights").delete().eq("home", homeKey).in("night", removed);
+    if (error) {
+      throw error;
+    }
+  }
+  savedData[homeKey] = [...after].sort();
+};
+
+const refreshCalendar = () => {
   renderCounts();
   if (selectedHome) {
     renderCalendar();
@@ -169,6 +178,7 @@ const buildMonthCalendar = (monthDate) => {
   const leadBlanks = (first.getDay() + 6) % 7;
   const selectedDates = new Set(getHomeDates());
   const savedDates = new Set(getHomeDates(savedData));
+  const siteDates = new Set(selectedHome ? siteNights[selectedHome] : []);
   const blanks = Array.from({ length: leadBlanks }, () => `<span class="admin-calendar-day is-empty"></span>`).join("");
   const days = Array.from({ length: totalDays }, (_, index) => {
     const day = index + 1;
@@ -176,16 +186,19 @@ const buildMonthCalendar = (monthDate) => {
     const isPast = iso < todayIso;
     const isSelected = selectedDates.has(iso);
     const isSaved = savedDates.has(iso);
+    // saytdan gələn rezervlər burada dəyişdirilmir: onları "Rezerv sorğuları" bölməsində idarə edin
+    const isSite = siteDates.has(iso) && !isSelected;
 
     return `
       <button
-        class="admin-calendar-day ${isSelected ? "is-booked" : ""} ${isSaved ? "is-saved" : ""} ${isPast ? "is-past" : ""}"
+        class="admin-calendar-day ${isSelected ? "is-booked" : ""} ${isSaved ? "is-saved" : ""} ${isSite ? "is-site" : ""} ${isPast ? "is-past" : ""}"
         type="button"
         data-admin-date="${iso}"
-        ${isPast ? "disabled" : ""}
+        ${isPast || isSite ? "disabled" : ""}
+        ${isSite ? 'title="Saytdan gələn rezerv — yuxarıdakı Rezerv sorğuları bölməsində idarə edin"' : ""}
       >
         <span>${day}</span>
-        <em>${isSelected ? "Rezerv" : "Boş"}</em>
+        <em>${isSelected ? "Rezerv" : isSite ? "Sayt" : "Boş"}</em>
       </button>
     `;
   }).join("");
@@ -262,30 +275,23 @@ if (adminNext) {
 }
 
 if (adminSave) {
-  adminSave.addEventListener("click", () => {
+  adminSave.addEventListener("click", async () => {
     if (!selectedHome) {
       return;
     }
-    savedData = cloneData(draftData);
-    persistBookedDates();
-    renderCounts();
-    renderCalendar();
-    renderSummary();
-    setStatus("Rezerv tarixləri təsdiqləndi və sayta tətbiq olundu.");
+    adminSave.disabled = true;
+    try {
+      await persistBookedDates(selectedHome, draftData[selectedHome]);
+      draftData = cloneData(savedData);
+      refreshCalendar();
+      setStatus("Rezerv tarixləri təsdiqləndi və sayta tətbiq olundu.");
+    } catch {
+      setStatus("Yadda saxlanmadı. İnterneti yoxlayıb yenidən cəhd edin.");
+    } finally {
+      adminSave.disabled = false;
+    }
   });
 }
-
-window.addEventListener("storage", (event) => {
-  if (event.key === storageKey || event.key === storageVersionKey) {
-    reloadBookedDates();
-  }
-});
-
-bookingChannel?.addEventListener("message", (event) => {
-  if (event.data?.type === "booked-dates-updated") {
-    reloadBookedDates();
-  }
-});
 
 if (adminClear) {
   adminClear.addEventListener("click", () => {
@@ -344,6 +350,32 @@ const monthDayField = (name, label, hint, monthDay) => {
   `;
 };
 
+// giriş-çıxış arasındakı fasilə: qonaq çıxandan sonra evi növbəti qonağa hazırlamaq üçün qalan vaxt
+const timeGapText = (checkin, checkout) => {
+  if (!checkin || !checkout) {
+    return "Hər iki saatı seçin.";
+  }
+  const toMinutes = (time) => Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
+  const gap = toMinutes(checkin) - toMinutes(checkout);
+  if (gap <= 0) {
+    return "⚠️ Çıxış saatı girişdən tez olmalıdır, əks halda çıxış günü həmin evə yeni qonaq girə bilməz.";
+  }
+  const hours = Math.floor(gap / 60);
+  const minutes = gap % 60;
+  const gapLabel = [hours ? `${hours} saat` : "", minutes ? `${minutes} dəqiqə` : ""].filter(Boolean).join(" ");
+  return `Nümunə: qonaq 10 dekabr, saat ${checkin} — girir; 12 dekabr, saat ${checkout} — çıxır (2 gecə). Həmin gün, 12 dekabr saat ${checkin} — növbəti qonaq girə bilər. Aradakı ${gapLabel} evi təmizləmək üçündür.`;
+};
+
+// rezerv kalendarının üstündəki izahda saatları yeniləyir
+const showAdminTimes = (checkin, checkout) => {
+  document.querySelectorAll("[data-admin-checkin]").forEach((element) => {
+    element.textContent = checkin;
+  });
+  document.querySelectorAll("[data-admin-checkout]").forEach((element) => {
+    element.textContent = checkout;
+  });
+};
+
 const renderSettingsForm = (settings) => {
   if (!settingsForm) {
     return;
@@ -359,6 +391,21 @@ const renderSettingsForm = (settings) => {
     )
     .join("");
   settingsForm.innerHTML = `
+    <fieldset class="admin-settings-card">
+      <legend>Giriş və çıxış saatları</legend>
+      <p class="admin-hint">Bu saatlar saytda, rezerv səhifəsində və qonağa göndərilən sorğu mesajında göstərilir. Bütün evlərə aiddir.</p>
+      <label class="admin-field" data-field="checkinTime">
+        <span>Giriş saatı (check-in)</span>
+        <input type="time" name="checkinTime" value="${settings.checkinTime}" step="900" required />
+        <small>Qonaq bu saatdan etibarən evə girə bilər</small>
+      </label>
+      <label class="admin-field" data-field="checkoutTime">
+        <span>Çıxış saatı (check-out)</span>
+        <input type="time" name="checkoutTime" value="${settings.checkoutTime}" step="900" required />
+        <small>Qonaq son gün bu saata qədər evi boşaltmalıdır</small>
+      </label>
+      <p class="admin-hint" data-time-gap>${timeGapText(settings.checkinTime, settings.checkoutTime)}</p>
+    </fieldset>
     ${homeCards}
     <fieldset class="admin-settings-card">
       <legend>Bütün evlər</legend>
@@ -431,6 +478,17 @@ const readSettingsForm = () => {
     }
     next.homes[homeKey] = rules;
   });
+  const isTime = (value) => /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+  next.checkinTime = String(data.get("checkinTime") ?? "");
+  next.checkoutTime = String(data.get("checkoutTime") ?? "");
+  if (!isTime(next.checkinTime)) {
+    flag("checkinTime", "Giriş saatını seçin.");
+  }
+  if (!isTime(next.checkoutTime)) {
+    flag("checkoutTime", "Çıxış saatını seçin.");
+  } else if (isTime(next.checkinTime) && next.checkoutTime >= next.checkinTime) {
+    flag("checkoutTime", "Çıxış saatı giriş saatından tez olmalıdır ki, çıxış günü evə yeni qonaq girə bilsin.");
+  }
   next.heating = {
     fee: readNumber("heating.fee"),
     start: readMonthDay("heating.start"),
@@ -445,8 +503,57 @@ const readSettingsForm = () => {
 };
 
 renderSettingsForm(SETTINGS);
+showAdminTimes(SETTINGS.checkinTime, SETTINGS.checkoutTime);
 
-settingsSave?.addEventListener("click", () => {
+settingsForm?.addEventListener("input", (event) => {
+  if (!["checkinTime", "checkoutTime"].includes(event.target.name)) {
+    return;
+  }
+  const gap = settingsForm.querySelector("[data-time-gap]");
+  if (gap) {
+    gap.textContent = timeGapText(settingsForm.elements.checkinTime.value, settingsForm.elements.checkoutTime.value);
+  }
+});
+
+// bazadakı promokodlar: kod → yazılan sətir (yalnız dəyişənləri yazmaq üçün) və onu istifadə edən rezerv
+let promosSaved = new Map();
+let promoReservationIds = new Map();
+
+const promoRow = (promo) => {
+  const { code, used, ...data } = normalizePromo(promo);
+  return { code, data, used, reservation_id: used ? promoReservationIds.get(code) ?? null : null };
+};
+
+const savePromos = async () => {
+  const rows = promosDraft.map(promoRow);
+  const changed = rows.filter((row) => promosSaved.get(row.code) !== JSON.stringify(row));
+  const removed = [...promosSaved.keys()].filter((code) => !rows.some((row) => row.code === code));
+  if (changed.length) {
+    const { error } = await supabaseClient.from("promo_codes").upsert(changed);
+    if (error) {
+      throw error;
+    }
+  }
+  if (removed.length) {
+    const { error } = await supabaseClient.from("promo_codes").delete().in("code", removed);
+    if (error) {
+      throw error;
+    }
+  }
+  promosSaved = new Map(rows.map((row) => [row.code, JSON.stringify(row)]));
+};
+
+const saveSiteSettings = async (settings) => {
+  const { promoCodes, ...data } = settings;
+  const { error } = await supabaseClient.from("site_settings").update({ data, updated_at: new Date().toISOString() }).eq("id", 1);
+  if (error) {
+    throw error;
+  }
+  localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(data));
+  applySettings(data);
+};
+
+settingsSave?.addEventListener("click", async () => {
   const { settings, errors } = readSettingsForm();
   syncSpecialsFromForm();
   specialsList?.querySelectorAll(".is-invalid").forEach((field) => field.classList.remove("is-invalid"));
@@ -459,55 +566,33 @@ settingsSave?.addEventListener("click", () => {
     return;
   }
   settings.specials = specialsDraft.map(normalizeSpecial);
-  settings.promoCodes = promosDraft.map(normalizePromo);
-  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-  setSettingsStatus("Yadda saxlanıldı. Sayt yeni qiymət və qaydalarla işləyir.");
+  settingsSave.disabled = true;
+  setSettingsStatus("Yadda saxlanılır...");
+  try {
+    await saveSiteSettings(settings);
+    await savePromos();
+    showAdminTimes(settings.checkinTime, settings.checkoutTime);
+    setSettingsStatus("Yadda saxlanıldı. Sayt bütün ziyarətçilər üçün yeni qiymət və qaydalarla işləyir.");
+  } catch {
+    setSettingsStatus("Yadda saxlanmadı. İnterneti yoxlayın; problem qalsa səhifəni yeniləyib yenidən daxil olun.", true);
+  } finally {
+    settingsSave.disabled = false;
+  }
 });
 
+// yalnız formadakı qiymət və qaydalar standarta qaytarılır; xüsusi günlər və promokodlar toxunulmur
 settingsReset?.addEventListener("click", () => {
-  if (!window.confirm("Bütün qiymət və qaydalar standart dəyərlərə qaytarılsın?")) {
+  if (!window.confirm("Formadakı qiymət və qaydalar standart dəyərlərlə əvəz olunsun? Bazaya yazmaq üçün sonra \"Yadda saxla\" basmalısınız.")) {
     return;
   }
-  localStorage.removeItem(SETTINGS_STORAGE_KEY);
   renderSettingsForm(DEFAULT_SETTINGS);
-  specialsDraft = [];
-  renderSpecialsList();
-  promosDraft = [];
-  promoArchive?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-promo-restore]");
-  if (!button || !window.confirm("Bu promokod yenidən aktiv olsun?")) {
-    return;
-  }
-  syncPromosFromForm();
-  promosDraft[Number(button.dataset.promoRestore)].used = null;
-  renderPromosList();
-  saveSettingsNow();
-});
-
-renderPromosList();
-  setSettingsStatus("Standart dəyərlər bərpa olundu.");
+  setSettingsStatus("Standart dəyərlər formaya yazıldı. Yoxlayıb \"Yadda saxla\" düyməsinə basın.");
 });
 
 /* ---------- bayram və xüsusi günlər ---------- */
 const specialsList = document.querySelector("[data-specials-list]");
-const specialPreset = document.querySelector("[data-special-preset]");
 const specialAdd = document.querySelector("[data-special-add]");
 
-// Azərbaycanın rəsmi bayramları; dəyişkən tarixli bayramlarda tarixləri admin özü seçir
-const HOLIDAY_PRESETS = [
-  { name: "Boş qayda", start: "", end: "", yearly: false },
-  { name: "Yeni il", start: "12-31", end: "01-02", yearly: true },
-  { name: "Qadınlar günü", start: "03-08", end: "03-08", yearly: true },
-  { name: "Novruz bayramı", start: "03-20", end: "03-24", yearly: true },
-  { name: "Ramazan bayramı", start: "", end: "", yearly: false },
-  { name: "Qələbə günü", start: "05-09", end: "05-09", yearly: true },
-  { name: "Müstəqillik günü", start: "05-28", end: "05-28", yearly: true },
-  { name: "Qurban bayramı", start: "", end: "", yearly: false },
-  { name: "Milli Qurtuluş günü", start: "06-15", end: "06-15", yearly: true },
-  { name: "Silahlı Qüvvələr günü", start: "06-26", end: "06-26", yearly: true },
-  { name: "Zəfər günü", start: "11-08", end: "11-08", yearly: true },
-  { name: "Dövlət Bayrağı günü", start: "11-09", end: "11-09", yearly: true }
-];
 
 let specialsDraft = SETTINGS.specials.map((rule) => ({ ...rule, homes: [...rule.homes] }));
 
@@ -560,6 +645,7 @@ const specialCard = (rule, index) => `
       <input type="checkbox" name="stack" ${rule.stack ? "checked" : ""} />
       <span>Uzun qalış endirimi bu günlərə də tətbiq olunsun</span>
     </label>
+    <small class="admin-hint">Uzun qalış endirimi evin öz endirimidir (yuxarıda hər evdə "Endirim (%)" və "Endirim neçə gecədən başlayır"). İşarəsiz olsa, bu günlərin gecələrinə yalnız bu qayda tətbiq olunur və iki endirim toplanmır.</small>
     <label class="admin-field admin-check">
       <input type="checkbox" name="active" ${rule.active ? "checked" : ""} />
       <span>Aktivdir (saytda görünür və hesablanır)</span>
@@ -578,7 +664,7 @@ const renderSpecialsList = () => {
   }
   specialsList.innerHTML = specialsDraft.length
     ? specialsDraft.map(specialCard).join("")
-    : `<p class="admin-hint">Hələ xüsusi gün yoxdur. Yuxarıdan hazır bayram seçib "Əlavə et" düyməsinə basın.</p>`;
+    : `<p class="admin-hint">Hələ xüsusi gün yoxdur. "+ Əlavə et" düyməsinə basıb adı, tarixləri və qiyməti özünüz yazın.</p>`;
 };
 
 // kartlardakı dəyərləri draft-a köçürür ki, əlavə/silmə zamanı yazılanlar itməsin
@@ -618,26 +704,14 @@ const validateSpecials = () => {
   return errors;
 };
 
-const nextYearFor = (monthDay) => {
-  const year = new Date().getFullYear();
-  return `${year}-${monthDay}` >= todayIso ? year : year + 1;
-};
-
-if (specialPreset) {
-  specialPreset.innerHTML = HOLIDAY_PRESETS.map((preset, index) => `<option value="${index}">${preset.name}</option>`).join("");
-}
-
 specialAdd?.addEventListener("click", () => {
   syncSpecialsFromForm();
-  const preset = HOLIDAY_PRESETS[Number(specialPreset?.value) || 0];
-  const startYear = preset.start ? nextYearFor(preset.start) : null;
-  // ilin sonundan keçən bayramda (Yeni il) son tarix növbəti ilə düşür
-  const endYear = preset.end ? (preset.end < preset.start ? startYear + 1 : startYear) : null;
+  // bayram və xüsusi günləri admin özü yaradır: ad və tarixləri özü yazır
   specialsDraft.push({
-    name: preset.name === "Boş qayda" ? "" : preset.name,
-    start: preset.start ? `${startYear}-${preset.start}` : "",
-    end: preset.end ? `${endYear}-${preset.end}` : "",
-    yearly: preset.yearly,
+    name: "",
+    start: "",
+    end: "",
+    yearly: false,
     homes: Object.keys(homes),
     type: "discount",
     value: 10,
@@ -864,18 +938,7 @@ promoAdd?.addEventListener("click", () => {
     active: true,
     used: null
   });
-  promoArchive?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-promo-restore]");
-  if (!button || !window.confirm("Bu promokod yenidən aktiv olsun?")) {
-    return;
-  }
-  syncPromosFromForm();
-  promosDraft[Number(button.dataset.promoRestore)].used = null;
   renderPromosList();
-  saveSettingsNow();
-});
-
-renderPromosList();
   setSettingsStatus("Yeni promokod əlavə olundu. Dəyərləri yoxlayıb \"Yadda saxla\" düyməsinə basın.");
 });
 
@@ -916,36 +979,14 @@ promosList?.addEventListener("click", (event) => {
       amount: Number(field("useAmount").value) || 0,
       at: `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
     };
-    promoArchive?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-promo-restore]");
-  if (!button || !window.confirm("Bu promokod yenidən aktiv olsun?")) {
-    return;
-  }
-  syncPromosFromForm();
-  promosDraft[Number(button.dataset.promoRestore)].used = null;
-  renderPromosList();
-  saveSettingsNow();
-});
-
-renderPromosList();
+    renderPromosList();
     saveSettingsNow();
     return;
   }
   if (event.target.closest("[data-promo-remove]")) {
     syncPromosFromForm();
     promosDraft.splice(Number(card.dataset.promoIndex), 1);
-    promoArchive?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-promo-restore]");
-  if (!button || !window.confirm("Bu promokod yenidən aktiv olsun?")) {
-    return;
-  }
-  syncPromosFromForm();
-  promosDraft[Number(button.dataset.promoRestore)].used = null;
-  renderPromosList();
-  saveSettingsNow();
-});
-
-renderPromosList();
+    renderPromosList();
     setSettingsStatus("Promokod silindi. Təsdiq üçün \"Yadda saxla\" düyməsinə basın.");
   }
 });
@@ -962,3 +1003,334 @@ promoArchive?.addEventListener("click", (event) => {
 });
 
 renderPromosList();
+
+/* ---------- saytdan gələn rezerv sorğuları ---------- */
+const reservationsList = document.querySelector("[data-reservations-list]");
+const reservationsStatus = document.querySelector("[data-reservations-status]");
+const reservationsTabs = document.querySelectorAll("[data-reservations-tab]");
+const RESERVATION_STATUS = { pending: "Gözləyir", confirmed: "Təsdiqlənib", cancelled: "Ləğv olunub", rejected: "Rədd edilib", expired: "Vaxtı bitib" };
+const TAB_STATUSES = { pending: ["pending"], confirmed: ["confirmed"], closed: ["cancelled", "rejected", "expired"] };
+
+let reservations = [];
+let reservationsTab = "pending";
+
+const addDay = (iso) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return toIsoDate(new Date(year, month - 1, day + 1));
+};
+
+const nightsBetween = (checkin, checkout) => {
+  let count = 0;
+  for (let night = checkin; night < checkout; night = addDay(night)) {
+    count += 1;
+  }
+  return count;
+};
+
+const setReservationsStatus = (message) => {
+  if (reservationsStatus) {
+    reservationsStatus.textContent = message;
+  }
+};
+
+// qonağın nömrəsi WhatsApp linki üçün: 055... → 99455...
+const whatsappNumber = (phone) => {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("994")) return digits;
+  if (digits.startsWith("0")) return `994${digits.slice(1)}`;
+  return digits.length === 9 ? `994${digits}` : digits;
+};
+
+const formatDateTime = (value) => {
+  const date = new Date(value);
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}, ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+const holdLeftText = (holdUntil) => {
+  const minutes = Math.round((new Date(holdUntil) - Date.now()) / 60000);
+  if (minutes <= 0) return "vaxt bitib";
+  const hours = Math.floor(minutes / 60);
+  return `${hours ? `${hours} saat ` : ""}${minutes % 60} dəq qalıb`;
+};
+
+const reservationGuests = (item) =>
+  [`${item.adults} böyük`, item.children ? `${item.children} uşaq` : "", item.pets ? `${item.pets} ev heyvanı` : ""].filter(Boolean).join(", ");
+
+const RESERVATION_ACTIONS = {
+  pending: [
+    { action: "confirm", label: "Təsdiqlə — beh alındı", className: "reservation-submit" },
+    { action: "extend", label: () => `Vaxtı uzat (+${SETTINGS.holdHours} saat)`, className: "admin-clear-button" },
+    { action: "reject", label: "Rədd et", className: "admin-clear-button admin-danger" }
+  ],
+  confirmed: [{ action: "cancel", label: "Ləğv et", className: "admin-clear-button admin-danger" }],
+  expired: [{ action: "reopen", label: "Yenidən aç", className: "admin-clear-button" }]
+};
+
+const reservationCard = (item) => {
+  const badge = item.status === "pending" ? "is-pending" : item.status === "confirmed" ? "" : "is-closed";
+  const name = `${item.first_name} ${item.last_name}`.trim();
+  const actions = (RESERVATION_ACTIONS[item.status] ?? [])
+    .map(({ action, label, className }) => `<button class="${className}" type="button" data-reservation-action="${action}">${typeof label === "function" ? label() : label}</button>`)
+    .join("");
+  return `
+    <article class="admin-reservation ${item.status === "pending" ? "is-pending" : ""}" data-reservation-id="${item.id}">
+      <header>
+        <h3>#${item.number} · ${homes[item.home] ?? escapeAttr(item.home)}</h3>
+        <span class="admin-badge ${badge}">${RESERVATION_STATUS[item.status] ?? item.status}</span>
+      </header>
+      ${item.status === "pending" ? `<p class="admin-hold">⏳ Tarixlər saxlanılır: ${formatDateTime(item.hold_until)} (${holdLeftText(item.hold_until)})</p>` : ""}
+      <dl>
+        <dt>Tarixlər</dt><dd>${formatAdminDate(item.checkin)} – ${formatAdminDate(item.checkout)} (${nightsBetween(item.checkin, item.checkout)} gecə)</dd>
+        <dt>Qonaqlar</dt><dd>${reservationGuests(item)}</dd>
+        <dt>Ad</dt><dd>${escapeAttr(name)}</dd>
+        <dt>Telefon</dt><dd><a href="tel:${escapeAttr(item.phone)}">${escapeAttr(item.phone)}</a> · <a href="https://wa.me/${whatsappNumber(item.phone)}" target="_blank" rel="noopener">WhatsApp</a></dd>
+        ${item.email ? `<dt>E-poçt</dt><dd>${escapeAttr(item.email)}</dd>` : ""}
+        <dt>Cəmi</dt><dd>${item.total} AZN</dd>
+        ${Number(item.prepay) ? `<dt>Beh</dt><dd>${item.prepay} AZN</dd>` : ""}
+        ${item.promo_code ? `<dt>Promokod</dt><dd>${escapeAttr(item.promo_code)}</dd>` : ""}
+        ${item.admin_note ? `<dt>Qeyd</dt><dd>${escapeAttr(item.admin_note)}</dd>` : ""}
+        <dt>Göndərilib</dt><dd>${formatDateTime(item.created_at)}</dd>
+      </dl>
+      ${actions ? `<div class="admin-reservation-actions">${actions}</div>` : ""}
+    </article>
+  `;
+};
+
+const renderReservations = () => {
+  if (!reservationsList) {
+    return;
+  }
+  reservationsTabs.forEach((tab) => {
+    tab.setAttribute("aria-selected", String(tab.dataset.reservationsTab === reservationsTab));
+  });
+  ["pending", "confirmed"].forEach((status) => {
+    const count = reservations.filter((item) => item.status === status).length;
+    document.querySelectorAll(`[data-reservations-count="${status}"]`).forEach((element) => {
+      element.textContent = count ? `(${count})` : "";
+    });
+  });
+  const shown = reservations.filter((item) => TAB_STATUSES[reservationsTab].includes(item.status));
+  const empty = { pending: "Hazırda gözləyən sorğu yoxdur.", confirmed: "Qarşıdakı təsdiqlənmiş rezerv yoxdur.", closed: "Son 30 gündə ləğv olunmuş və ya vaxtı bitmiş sorğu yoxdur." };
+  reservationsList.innerHTML = shown.length ? shown.map(reservationCard).join("") : `<p class="admin-hint">${empty[reservationsTab]}</p>`;
+};
+
+// vaxtı bitən gözləmələri bağlayır, son 30 gün və gələcək rezervləri yükləyir
+const loadReservations = async () => {
+  await supabaseClient.rpc("expire_holds");
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+  const { data, error } = await supabaseClient.from("reservations").select("*").gte("checkout", toIsoDate(since)).order("checkin");
+  if (error) {
+    throw error;
+  }
+  reservations = data;
+  siteNights = emptyData();
+  reservations
+    .filter((item) => item.status === "confirmed" || (item.status === "pending" && new Date(item.hold_until) > new Date()))
+    .forEach((item) => {
+      for (let night = item.checkin; night < item.checkout; night = addDay(night)) {
+        siteNights[item.home]?.push(night);
+      }
+    });
+  renderReservations();
+  refreshCalendar();
+};
+
+const reloadReservations = async () => {
+  try {
+    await loadReservations();
+    setReservationsStatus("");
+  } catch {
+    setReservationsStatus("Rezervlər yüklənmədi. İnterneti yoxlayıb \"Yenilə\" düyməsinə basın.");
+  }
+};
+
+reservationsTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    reservationsTab = tab.dataset.reservationsTab;
+    renderReservations();
+  });
+});
+
+document.querySelector("[data-reservations-refresh]")?.addEventListener("click", reloadReservations);
+
+reservationsList?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-reservation-action]");
+  if (!button) {
+    return;
+  }
+  const item = reservations.find((reservation) => reservation.id === button.closest("[data-reservation-id]").dataset.reservationId);
+  const action = button.dataset.reservationAction;
+  const holdMs = SETTINGS.holdHours * 3600000;
+  const questions = {
+    confirm: `#${item.number} rezervi təsdiqlənsin? Bunu beh alındıqdan sonra edin.`,
+    reject: `#${item.number} sorğusu rədd edilsin? Tarixlər dərhal açılacaq.`,
+    cancel: `#${item.number} rezervi ləğv edilsin? Tarixlər dərhal açılacaq. Beh qaydaya görə qaytarılmır.`
+  };
+  if (questions[action] && !window.confirm(questions[action])) {
+    return;
+  }
+  const changes = {
+    confirm: { status: "confirmed" },
+    extend: { hold_until: new Date(Math.max(Date.now(), new Date(item.hold_until).getTime()) + holdMs).toISOString() },
+    reject: { status: "rejected" },
+    cancel: { status: "cancelled" },
+    reopen: { status: "pending", hold_until: new Date(Date.now() + holdMs).toISOString() }
+  }[action];
+  button.disabled = true;
+  const { error } = await supabaseClient.from("reservations").update(changes).eq("id", item.id);
+  await reloadReservations();
+  if (error) {
+    setReservationsStatus(error.code === "23P01" ? `#${item.number}: bu tarixlər artıq başqa rezervlə tutulub.` : "Dəyişiklik yadda saxlanmadı. İnterneti yoxlayıb yenidən cəhd edin.");
+  }
+});
+
+/* ---------- giriş və bazadan yükləmə ---------- */
+const loginText = document.querySelector("[data-admin-login-text]");
+const loginForm = document.querySelector("[data-admin-login-form]");
+const loginStatus = document.querySelector("[data-admin-login-status]");
+const loginPanel = document.querySelector("[data-admin-login]");
+const adminApp = document.querySelector("[data-admin-app]");
+const logoutButton = document.querySelector("[data-admin-logout]");
+
+const readLegacy = (key) => {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "null");
+  } catch {
+    return null;
+  }
+};
+
+// Supabase-dən əvvəl bu brauzerdə saxlanan ayarlar, promokodlar və tarixlər baza boşdursa bir dəfə köçürülür
+const migrateLegacyData = async (serverSettings, promoRows) => {
+  const moved = [];
+  const legacySettings = readLegacy(LEGACY_SETTINGS_KEY);
+  if (legacySettings && !Object.keys(serverSettings).length) {
+    await saveSiteSettings(fixTimes(mergeSettings(DEFAULT_SETTINGS, legacySettings)));
+    moved.push("qiymət ayarları");
+  }
+  if (Array.isArray(legacySettings?.promoCodes) && legacySettings.promoCodes.length && !promoRows.length) {
+    promosDraft = legacySettings.promoCodes.map(normalizePromo).filter(Boolean);
+    promosSaved = new Map();
+    await savePromos();
+    moved.push("promokodlar");
+  }
+  const legacyBooked = readLegacy(LEGACY_BOOKED_KEY);
+  if (legacyBooked && homeKeys.every((key) => !savedData[key].length)) {
+    const legacy = normalizeData(legacyBooked);
+    for (const key of homeKeys) {
+      const future = legacy[key].filter((night) => night >= todayIso);
+      if (future.length) {
+        await persistBookedDates(key, future);
+        moved.push(`${homes[key]} tarixləri`);
+      }
+    }
+  }
+  localStorage.removeItem(LEGACY_SETTINGS_KEY);
+  localStorage.removeItem(LEGACY_BOOKED_KEY);
+  return moved;
+};
+
+const loadAdminData = async () => {
+  const [settingsResult, promosResult] = await Promise.all([
+    supabaseClient.from("site_settings").select("data").eq("id", 1).single(),
+    supabaseClient.from("promo_codes").select("*").order("created_at")
+  ]);
+  if (settingsResult.error || promosResult.error) {
+    throw settingsResult.error || promosResult.error;
+  }
+  await loadBlockedNights();
+  const moved = await migrateLegacyData(settingsResult.data.data, promosResult.data);
+  if (moved.length) {
+    await loadAdminData();
+    setSettingsStatus(`Bu brauzerdəki köhnə məlumatlar bazaya köçürüldü: ${moved.join(", ")}.`);
+    return;
+  }
+
+  const serverSettings = settingsResult.data.data;
+  localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(serverSettings));
+  applySettings(serverSettings);
+  renderSettingsForm(SETTINGS);
+  showAdminTimes(SETTINGS.checkinTime, SETTINGS.checkoutTime);
+  document.querySelectorAll("[data-admin-hold]").forEach((element) => {
+    element.textContent = SETTINGS.holdHours;
+  });
+  specialsDraft = SETTINGS.specials.map((rule) => ({ ...rule, homes: [...rule.homes] }));
+  renderSpecialsList();
+
+  promoReservationIds = new Map(promosResult.data.map((row) => [row.code, row.reservation_id]));
+  promosDraft = promosResult.data.map((row) => normalizePromo({ ...row.data, code: row.code, used: row.used })).filter(Boolean);
+  promosSaved = new Map(promosDraft.map((promo) => [promo.code, JSON.stringify(promoRow(promo))]));
+  renderPromosList();
+
+  await loadReservations();
+};
+
+const showLoginForm = (message = "") => {
+  loginPanel.hidden = false;
+  adminApp.hidden = true;
+  logoutButton.hidden = true;
+  loginForm.hidden = false;
+  loginText.textContent = "Admin e-poçtu və parolu ilə daxil olun.";
+  loginStatus.textContent = message;
+};
+
+const startAdmin = async () => {
+  loginForm.hidden = true;
+  loginStatus.textContent = "";
+  loginText.textContent = "Məlumatlar yüklənir...";
+  const { data: isAdmin, error } = await supabaseClient.rpc("is_admin");
+  if (error || !isAdmin) {
+    await supabaseClient.auth.signOut();
+    showLoginForm(error ? "Bazaya qoşulmaq olmadı. İnterneti yoxlayın." : "Bu hesabın admin icazəsi yoxdur.");
+    return;
+  }
+  try {
+    await loadAdminData();
+  } catch {
+    loginText.textContent = "Məlumatlar yüklənmədi. İnterneti yoxlayıb səhifəni yeniləyin.";
+    return;
+  }
+  loginPanel.hidden = true;
+  adminApp.hidden = false;
+  logoutButton.hidden = false;
+  // adminin öz ziyarətləri saytın statistikasına düşməsin
+  localStorage.setItem("avakhylNoTrack", "1");
+};
+
+loginForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(loginForm);
+  loginStatus.textContent = "";
+  const { error } = await supabaseClient.auth.signInWithPassword({ email: String(data.get("email")).trim(), password: String(data.get("password")) });
+  if (error) {
+    loginStatus.textContent = "E-poçt və ya parol səhvdir.";
+    return;
+  }
+  startAdmin();
+});
+
+logoutButton?.addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+});
+
+// açıq qalan panel sorğuları hər dəqiqə və səhifəyə qayıdanda yeniləyir
+window.setInterval(() => {
+  if (!adminApp.hidden) {
+    reloadReservations();
+  }
+}, 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && !adminApp.hidden) {
+    reloadReservations();
+  }
+});
+
+supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    startAdmin();
+  } else {
+    showLoginForm();
+  }
+});

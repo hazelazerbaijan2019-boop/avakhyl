@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avakhyl | Rezervi ləğv et</title>
+    <meta name="description" content="Avakhyl rezervasiyasının ləğvi" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+    <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="styles.css?v=20261119-6" />
+  </head>
+  <body>
+    <svg class="sprite" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+        <path d="M3.6 9h16.8M3.6 15h16.8M12 3c2.2 2.3 3.4 5.4 3.4 9S14.2 18.7 12 21c-2.2-2.3-3.4-5.4-3.4-9S9.8 5.3 12 3Z" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </symbol>
+      <symbol id="icon-instagram" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
+        <path d="M17.5 6.5h.01" />
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </symbol>
+    </svg>
+
+    <header class="site-header house-site-header" data-header>
+      <a class="brand" href="index.html#home" aria-label="Avakhyl">
+        <img src="assets/avakhyl-logo.webp" alt="Avakhyl" data-brand-logo />
+      </a>
+      <div class="header-actions">
+        <div class="lang-switcher" aria-label="Dil seçimi">
+          <svg><use href="#icon-globe" /></svg>
+          <button type="button" data-lang="az" aria-pressed="true">AZ</button>
+          <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="reservation-page">
+      <section class="section reservation-page-section">
+        <div class="container cancel-shell">
+          <div class="reservation-form-card cancel-card">
+            <h1 data-cancel-title>Rezervi ləğv et</h1>
+            <dl class="cancel-details" data-cancel-details hidden></dl>
+            <p data-cancel-text></p>
+            <label class="warning-accept" data-cancel-confirm hidden>
+              <input type="checkbox" data-cancel-accept />
+              <span data-cancel-accept-label></span>
+            </label>
+            <p class="booking-status" data-cancel-status hidden role="status"></p>
+            <button class="reservation-submit" type="button" data-cancel-button disabled hidden></button>
+            <a class="secondary-link" data-cancel-home href="index.html"></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="db.js?v=20261119-6"></script>
+    <script src="settings.js?v=20261119-6"></script>
+    <script src="analytics.js?v=20261119-6"></script>
+    <script src="cancel.js?v=20261119-6"></script>
+  </body>
+</html>

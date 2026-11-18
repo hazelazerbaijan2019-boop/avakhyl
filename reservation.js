@@ -12,6 +12,7 @@ const reservationWarning = document.querySelector("[data-reservation-warning]");
 const warningClose = document.querySelector("[data-warning-close]");
 const warningAccept = document.querySelector("[data-warning-accept]");
 const warningSend = document.querySelector("[data-warning-send]");
+const bookingStatus = document.querySelector("[data-booking-status]");
 
 const clampNumber = (value, fallback, min = 0, max = 30) => {
   const parsed = Number.parseInt(value, 10);
@@ -57,7 +58,7 @@ const text = {
     "reservation.guests": "Qonaqlar",
     "reservation.priceDetails": "Qiymət təfərrüatları",
     "reservation.discount": "Endirim ({discountNights}+ gecə, {discount}%)",
-    "reservation.times": "Giriş 14:00-dan, çıxış 12:00-dək",
+    "reservation.times": "Giriş saatı {checkin}, çıxış saatı {checkout}",
     "promo.label": "Promokod",
     "promo.placeholder": "Promokodu daxil edin",
     "promo.apply": "Tətbiq et",
@@ -104,7 +105,7 @@ const text = {
     "reservation.guests": "Гости",
     "reservation.priceDetails": "Детали цены",
     "reservation.discount": "Скидка (от {discountNights} ночей, {discount}%)",
-    "reservation.times": "Заезд с 14:00, выезд до 12:00",
+    "reservation.times": "Заезд с {checkin}, выезд до {checkout}",
     "promo.label": "Промокод",
     "promo.placeholder": "Введите промокод",
     "promo.apply": "Применить",
@@ -151,7 +152,7 @@ const text = {
     "reservation.guests": "Guests",
     "reservation.priceDetails": "Price details",
     "reservation.discount": "Discount ({discountNights}+ nights, {discount}%)",
-    "reservation.times": "Check-in from 14:00, check-out by 12:00",
+    "reservation.times": "Check-in from {checkin}, check-out by {checkout}",
     "promo.label": "Promo code",
     "promo.placeholder": "Enter promo code",
     "promo.apply": "Apply",
@@ -366,6 +367,9 @@ const openReservationWarning = () => {
   if (warningSend) {
     warningSend.disabled = true;
   }
+  if (bookingStatus) {
+    bookingStatus.hidden = true;
+  }
   document.body.classList.add("modal-open");
 };
 
@@ -378,14 +382,14 @@ const closeReservationWarning = () => {
   document.body.classList.remove("modal-open");
 };
 
-const buildWhatsAppMessage = () => {
+const buildWhatsAppMessage = (result) => {
   const { nights, lines, discount, promo, heating, total } = getReservationMath();
   const formData = new FormData(reservationForm);
   return [
-    "Avakhyl rezervasiya sorğusu",
+    ...reservationMessageHead(result, currentLang),
     `Ev: ${selectedHomeName()}`,
-    `Giriş (14:00-dan): ${formatDate(state.checkin)}`,
-    `Çıxış (12:00-dək): ${formatDate(state.checkout)}`,
+    `Giriş (saat ${SETTINGS.checkinTime}): ${formatDate(state.checkin)}`,
+    `Çıxış (saat ${SETTINGS.checkoutTime}): ${formatDate(state.checkout)}`,
     `Gecə sayı: ${nights}`,
     `Qonaqlar: ${formatGuestLine()}`,
     ...lines.map((line) => `Qiymət: ${formatCurrency(line.price)} x ${formatNightText(line.nights)}${line.label ? ` (${line.label})` : ""}`),
@@ -443,7 +447,16 @@ if (warningAccept && warningSend) {
     if (!warningAccept.checked) {
       return;
     }
-    window.location.href = `https://wa.me/994552625633?text=${encodeURIComponent(buildWhatsAppMessage())}`;
+    const payload = reservationPayload({
+      home: selectedHome,
+      checkin: state.checkin,
+      checkout: state.checkout,
+      guests: state.guests,
+      form: reservationForm,
+      math: getReservationMath(),
+      lang: currentLang
+    });
+    sendReservation({ payload, buildMessage: buildWhatsAppMessage, getText, button: warningSend, statusBox: bookingStatus });
   });
 }
 
@@ -463,3 +476,7 @@ document.addEventListener("keydown", (event) => {
 
 setTheme(currentTheme);
 renderReservation();
+document.addEventListener("avakhyl:settings", renderReservation);
+if (state.promo) {
+  loadPromo(state.promo).then(renderReservation);
+}

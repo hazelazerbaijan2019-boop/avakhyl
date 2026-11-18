@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Avakhyl | Rəhbər paneli</title>
     <meta name="description" content="Avakhyl rəhbər rezervasiya paneli" />
+    <meta name="robots" content="noindex" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="apple-touch-icon" href="assets/favicon-180.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=20261118-8" />
+    <link rel="stylesheet" href="styles.css?v=20261119-6" />
   </head>
   <body>
     <svg class="sprite" xmlns="http://www.w3.org/2000/svg">
@@ -46,6 +47,7 @@
                 <svg data-theme-icon><use href="#icon-moon" /></svg>
                 <span data-theme-label>Qara fon</span>
               </button>
+              <button class="admin-clear-button" type="button" data-admin-logout hidden>Çıxış</button>
               <a class="secondary-link admin-site-link" href="index.html#homes">
                 Sayta bax
                 <svg><use href="#icon-arrow" /></svg>
@@ -53,10 +55,92 @@
             </div>
           </header>
 
-          <div class="admin-heading">
+          <section class="admin-calendar-panel admin-login" data-admin-login>
             <p class="eyebrow">AVAKHYL rəhbər paneli</p>
-            <h1>Rezerv tarixlərini idarə et</h1>
-            <p>Evə klik edin və kalendarda <strong>dolu gecələri</strong> seçin. Məsələn, qonaq 10 dekabrda girib 12 dekabrda çıxırsa, 10 və 11 dekabrı seçin — 12 dekabr boş qalır, çünki çıxış 12:00-da, növbəti giriş 14:00-dadır.</p>
+            <h1>Giriş</h1>
+            <p data-admin-login-text>Yoxlanılır...</p>
+            <form class="admin-login-form" data-admin-login-form hidden>
+              <label class="admin-field">
+                <span>E-poçt</span>
+                <input type="email" name="email" autocomplete="username" required />
+              </label>
+              <label class="admin-field">
+                <span>Parol</span>
+                <input type="password" name="password" autocomplete="current-password" required />
+              </label>
+              <button class="reservation-submit" type="submit">Daxil ol</button>
+              <span class="admin-login-status" data-admin-login-status></span>
+            </form>
+          </section>
+
+          <div class="admin-app" data-admin-app hidden>
+          <nav class="admin-nav" aria-label="Panel bölmələri">
+            <a href="#rezervler">Rezerv sorğuları</a>
+            <a href="#analitika">Analitika</a>
+            <a href="#kalendar">Kalendar</a>
+            <a href="#ayarlar">Qiymət ayarları</a>
+          </nav>
+
+          <section class="admin-calendar-panel admin-reservations" id="rezervler" data-reservations-panel>
+            <div class="admin-calendar-head">
+              <div>
+                <p class="eyebrow">Saytdan gələn sorğular</p>
+                <h2>Rezerv sorğuları</h2>
+                <p>Qonaq saytdan sorğu göndərəndə o burada görünür və tarixlər <strong data-admin-hold>2</strong> saat tutulur. Qonaqla əlaqə saxlayın: beh alanda <strong>"Təsdiqlə — beh alındı"</strong> basın. Beh alınmasa, vaxt bitəndə tarixlər özü açılır. Qonağa əlavə vaxt lazımdırsa <strong>"Vaxtı uzat"</strong>, tarixləri dərhal açmaq üçün <strong>"Rədd et"</strong> basın.</p>
+              </div>
+              <button class="admin-clear-button" type="button" data-reservations-refresh>Yenilə</button>
+            </div>
+            <div class="admin-tabs" role="tablist" data-reservations-tabs>
+              <button type="button" role="tab" data-reservations-tab="pending" aria-selected="true">Gözləyənlər <span data-reservations-count="pending"></span></button>
+              <button type="button" role="tab" data-reservations-tab="confirmed" aria-selected="false">Təsdiqlənmiş <span data-reservations-count="confirmed"></span></button>
+              <button type="button" role="tab" data-reservations-tab="closed" aria-selected="false">Ləğv / vaxtı bitmiş</button>
+            </div>
+            <div class="admin-reservations-list" data-reservations-list></div>
+            <span data-reservations-status></span>
+          </section>
+
+          <section class="admin-calendar-panel admin-analytics" id="analitika" data-analytics-panel>
+            <div class="admin-calendar-head">
+              <div>
+                <p class="eyebrow">Sayta girənlər</p>
+                <h2>Analitika</h2>
+                <p>Ziyarətçilər, baxdıqları səhifələr, ən çox klik etdikləri yerlər və haradan gəldikləri. Ziyarətçilər anonimdir: ad, telefon və IP yazılmır. Sizin (admin) ziyarətləriniz sayılmır.</p>
+              </div>
+              <button class="admin-clear-button" type="button" data-analytics-refresh>Yenilə</button>
+            </div>
+            <div class="analytics-filters">
+              <div class="admin-tabs" role="tablist" aria-label="Dövr">
+                <button type="button" role="tab" data-analytics-range="1" aria-selected="false">Bu gün</button>
+                <button type="button" role="tab" data-analytics-range="7" aria-selected="true">7 gün</button>
+                <button type="button" role="tab" data-analytics-range="30" aria-selected="false">30 gün</button>
+                <button type="button" role="tab" data-analytics-range="90" aria-selected="false">90 gün</button>
+              </div>
+              <label class="admin-check analytics-test">
+                <input type="checkbox" data-analytics-test />
+                <span>Sınaq ziyarətlərini (localhost) də göstər</span>
+              </label>
+            </div>
+            <div class="analytics-live" data-analytics-live></div>
+            <div class="analytics-kpis" data-analytics-kpis></div>
+            <div class="analytics-card analytics-wide">
+              <header>
+                <h3 data-analytics-chart-title>Gündəlik</h3>
+                <div class="admin-tabs analytics-metric" role="tablist" aria-label="Göstərici" data-analytics-metrics>
+                  <button type="button" role="tab" data-analytics-metric="visitors" aria-selected="true">Ziyarətçilər</button>
+                  <button type="button" role="tab" data-analytics-metric="sessions" aria-selected="false">Sessiyalar</button>
+                  <button type="button" role="tab" data-analytics-metric="pageviews" aria-selected="false">Baxışlar</button>
+                </div>
+              </header>
+              <div class="analytics-chart" data-analytics-chart></div>
+            </div>
+            <div class="analytics-grid" data-analytics-grid></div>
+            <span data-analytics-status></span>
+          </section>
+
+          <div class="admin-heading" id="kalendar">
+            <p class="eyebrow">Telefonla və başqa yolla gələn rezervlər</p>
+            <h2>Tarixləri əllə bağla</h2>
+            <p>Saytdan gələn sorğular kalendarda özü görünür (<strong>"Sayt"</strong> yazılır). Telefonla və ya başqa yolla gələn rezervlər üçün evə klik edin və kalendarda <strong>dolu gecələri</strong> seçin. Məsələn, qonaq 10 dekabrda girib 12 dekabrda çıxırsa, 10 və 11 dekabrı seçin — 12 dekabr boş qalır, çünki çıxış saatı (<strong data-admin-checkout>12:00</strong>) növbəti girişdən (<strong data-admin-checkin>14:00</strong>) tezdir.</p>
           </div>
 
           <div class="admin-home-grid" data-admin-homes>
@@ -109,12 +193,12 @@
             </div>
           </section>
 
-          <section class="admin-calendar-panel admin-settings" data-settings-panel>
+          <section class="admin-calendar-panel admin-settings" id="ayarlar" data-settings-panel>
             <div class="admin-calendar-head">
               <div>
                 <p class="eyebrow">Qiymətlər və qaydalar</p>
                 <h2>Qiymət ayarları</h2>
-                <p>Rəqəmləri dəyişib "Yadda saxla" düyməsinə basın. Saytdakı qiymət cədvəli, kalendar, hesablama, qeydlər və WhatsApp mesajı yeni dəyərlərlə işləyəcək.</p>
+                <p>Rəqəmləri dəyişib "Yadda saxla" düyməsinə basın. Dəyişiklik bazaya yazılır və bütün ziyarətçilərdə dərhal tətbiq olunur: qiymət cədvəli, kalendar, hesablama, qeydlər və WhatsApp mesajı.</p>
               </div>
             </div>
 
@@ -127,7 +211,6 @@
                   <p>Seçilən tarixlərdə gecə qiyməti dəyişir: sabit qiymət, endirim və ya artım. Tarixlər üst-üstə düşərsə, siyahıda yuxarıdakı qayda tətbiq olunur.</p>
                 </div>
                 <div class="admin-specials-add">
-                  <select data-special-preset aria-label="Hazır bayram seçin"></select>
                   <button class="admin-clear-button" type="button" data-special-add>+ Əlavə et</button>
                 </div>
               </div>
@@ -151,7 +234,7 @@
               <div class="admin-specials-head">
                 <div>
                   <h3>İstifadə olunmuş promokodlar (arxiv)</h3>
-                  <p>Hər promokod yalnız bir dəfə istifadə oluna bilər. WhatsApp-dan promokodlu rezervasiya gələndə və onu təsdiqlədikdə, aktiv promokodun kartında "İstifadə olundu" düyməsinə basın — kod saytda bağlanır və buraya düşür.</p>
+                  <p>Hər promokod yalnız bir dəfə istifadə oluna bilər. Qonaq saytdan promokodla sorğu göndərəndə kod <strong>özü</strong> buraya düşür. Sorğu ləğv və ya rədd olunsa, ya da vaxtı bitsə, kod yenidən aktiv olur. Promokod telefonla verilən rezervdə istifadə olunubsa, kodun kartında "İstifadə olundu" düyməsinə basın.</p>
                 </div>
               </div>
               <div class="admin-archive" data-promo-archive></div>
@@ -159,15 +242,19 @@
 
             <div class="admin-actions">
               <button class="reservation-submit" type="button" data-settings-save>Yadda saxla</button>
-              <button class="admin-clear-button" type="button" data-settings-reset>Standart dəyərlərə qaytar</button>
+              <button class="admin-clear-button" type="button" data-settings-reset>Standart qiymətləri formaya yaz</button>
               <span data-settings-status></span>
             </div>
           </section>
+          </div>
         </div>
       </section>
     </main>
 
-    <script src="settings.js?v=20261118-8"></script>
-    <script src="admin.js?v=20261118-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+    <script src="db.js?v=20261119-6"></script>
+    <script src="settings.js?v=20261119-6"></script>
+    <script src="admin.js?v=20261119-6"></script>
+    <script src="admin-analytics.js?v=20261119-6"></script>
   </body>
 </html>
