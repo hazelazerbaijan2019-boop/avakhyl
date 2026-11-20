@@ -8,11 +8,11 @@ const DEFAULT_SETTINGS = {
   homes: {
     // basePrice baseGuests nəfərə qədər keçərlidir; sonrakı hər böyük üçün extraGuestPrice əlavə olunur.
     // maxAdults evin tutumudur: böyük + uşaq birlikdə bu saydan çox ola bilməz. Qiymətdə yalnız böyüklər sayılır.
-    qaya: { basePrice: 90, baseGuests: 3, extraGuestPrice: 20, minAdults: 1, maxAdults: 10, maxPets: 2, discountPercent: 10, discountMinNights: 3 },
-    ardic: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 2, discountPercent: 0, discountMinNights: 3 },
-    palid: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 2, discountPercent: 0, discountMinNights: 3 },
-    glamp4: { basePrice: 130, baseGuests: 4, extraGuestPrice: 0, minAdults: 1, maxAdults: 4, maxPets: 2, discountPercent: 0, discountMinNights: 3 },
-    glamp2: { basePrice: 60, baseGuests: 2, extraGuestPrice: 0, minAdults: 1, maxAdults: 2, maxPets: 2, discountPercent: 0, discountMinNights: 3 }
+    qaya: { basePrice: 90, baseGuests: 3, extraGuestPrice: 20, minAdults: 1, maxAdults: 10, maxPets: 1, discountPercent: 10, discountMinNights: 3 },
+    ardic: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 1, discountPercent: 0, discountMinNights: 3 },
+    palid: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 1, discountPercent: 0, discountMinNights: 3 },
+    glamp4: { basePrice: 130, baseGuests: 4, extraGuestPrice: 0, minAdults: 1, maxAdults: 4, maxPets: 1, discountPercent: 0, discountMinNights: 3 },
+    glamp2: { basePrice: 60, baseGuests: 2, extraGuestPrice: 0, minAdults: 1, maxAdults: 2, maxPets: 1, discountPercent: 0, discountMinNights: 3 }
   },
   // istilik ödənişi: "AA-GG" formatında başlanğıc (daxil) və son (daxil deyil) tarixlər;
   // mode "night" — dövrə düşən hər gecə üçün, "stay" — dövrə düşən qalış üçün bir dəfə;
