@@ -420,7 +420,7 @@ const homes = {
   },
   glamp4: {
     name: "Glamphouse böyük (4 nəfərlik)",
-    image: "assets/glamp4/glamp4-01.webp",
+    image: "assets/glamp4/glamp4-02.webp",
     gallery: glamp4Images,
     videos: glamp4Videos,
     kicker: {
