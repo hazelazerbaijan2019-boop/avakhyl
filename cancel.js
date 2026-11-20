@@ -24,6 +24,11 @@ const text = {
     button: "Rezervi ləğv et",
     done: "Rezerviniz ləğv olundu.",
     closed: "Bu rezervi artıq ləğv etmək mümkün deyil.",
+    closedBy: {
+      expired: "Sorğu təsdiqlənmədiyi üçün gözləmə müddəti bitib və tarixlər artıq boşdur. Ləğv etməyə ehtiyac yoxdur. Yenidən rezerv etmək üçün sorğunu təkrar göndərin.",
+      cancelled: "Bu rezerv artıq ləğv olunub.",
+      rejected: "Bu sorğu rədd edilib, tarixlər boşdur."
+    },
     failed: "Ləğv olunmadı. İnterneti yoxlayıb yenidən cəhd edin və ya bizə WhatsApp-dan yazın.",
     home_link: "Ana səhifəyə qayıt",
     statuses: { pending: "Gözləyir", confirmed: "Təsdiqlənib", cancelled: "Ləğv olunub", rejected: "Rədd edilib", expired: "Vaxtı bitib" }
@@ -42,6 +47,11 @@ const text = {
     button: "Отменить бронь",
     done: "Ваша бронь отменена.",
     closed: "Эту бронь уже нельзя отменить.",
+    closedBy: {
+      expired: "Запрос не был подтверждён, срок ожидания истёк, и даты уже свободны. Отменять ничего не нужно. Чтобы забронировать снова, отправьте запрос повторно.",
+      cancelled: "Эта бронь уже отменена.",
+      rejected: "Этот запрос отклонён, даты свободны."
+    },
     failed: "Не удалось отменить. Проверьте интернет и попробуйте снова или напишите нам в WhatsApp.",
     home_link: "На главную",
     statuses: { pending: "Ожидает", confirmed: "Подтверждена", cancelled: "Отменена", rejected: "Отклонена", expired: "Истекла" }
@@ -60,6 +70,11 @@ const text = {
     button: "Cancel reservation",
     done: "Your reservation has been cancelled.",
     closed: "This reservation can no longer be cancelled.",
+    closedBy: {
+      expired: "The request was not confirmed, so the hold has expired and the dates are free again. There is nothing to cancel. To book, please send the request again.",
+      cancelled: "This reservation has already been cancelled.",
+      rejected: "This request was declined; the dates are free."
+    },
     failed: "Cancellation failed. Check your connection and try again, or message us on WhatsApp.",
     home_link: "Back to home page",
     statuses: { pending: "Pending", confirmed: "Confirmed", cancelled: "Cancelled", rejected: "Rejected", expired: "Expired" }
@@ -113,7 +128,7 @@ const render = (state = "") => {
   else if (!reservation) message.textContent = t.notFound;
   else if (cancelled) message.textContent = t.done;
   else if (isOpen()) message.textContent = `${t.ask}${reservation.status === "confirmed" ? ` ${t.paid}` : ""}`;
-  else message.textContent = t.closed;
+  else message.textContent = t.closedBy[reservation.status] ?? t.closed;
 
   confirmBox.hidden = !isOpen();
   button.hidden = !isOpen();
