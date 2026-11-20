@@ -54,6 +54,7 @@ const reservationState = {
     pets: clampNumber(params.get("pets"), 0, 0, maxFor("pets"))
   }
 };
+fitChildren(homeRules(selectedHome), reservationState.guests);
 
 const text = {
   az: {
@@ -827,7 +828,7 @@ const addMonths = (date, amount) => new Date(date.getFullYear(), date.getMonth()
 const dayDiff = (startIso, endIso) => Math.max(0, Math.round((fromIsoDate(endIso) - fromIsoDate(startIso)) / 86400000));
 const todayIso = toIsoDate(new Date());
 
-const guestLimitReached = (guests, key) => guests[key] >= maxFor(key);
+const guestLimitReached = (guests, key) => guestLimitHit(homeRules(selectedHome), guests, key);
 
 const getNightlyPrice = () => nightlyPrice(selectedHome, reservationState.guests.adults);
 

@@ -32,6 +32,7 @@ const state = {
     pets: clampNumber(params.get("pets"), 0, 0, maxFor("pets"))
   }
 };
+fitChildren(homeRules(selectedHome), state.guests);
 
 const homes = {
   qaya: "Qaya 🏔️",
@@ -234,7 +235,7 @@ const formatGuestLine = () => {
   return [`${adults} böyük`, children ? `${children} uşaq` : "", pets ? `${pets} ev heyvanı` : ""].filter(Boolean).join(", ");
 };
 
-const guestLimitReached = (guests, key) => guests[key] >= maxFor(key);
+const guestLimitReached = (guests, key) => guestLimitHit(homeRules(selectedHome), guests, key);
 
 const getNightlyPrice = () => nightlyPrice(selectedHome, state.guests.adults);
 

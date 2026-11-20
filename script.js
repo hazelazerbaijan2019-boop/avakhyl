@@ -555,7 +555,7 @@ const setMobileMenu = (isOpen) => {
 // qonaq limitləri rəhbər panelindən (settings.js); yalnız böyüklər sayılır, uşaqlar limitə daxil deyil
 const maxFor = (key) => (key === "adults" ? homeRules(selectedCottage).maxAdults : key === "pets" ? homeRules(selectedCottage).maxPets : Infinity);
 const minFor = (key) => (key === "adults" ? homeRules(selectedCottage).minAdults : 0);
-const limitReached = (key) => guestCounts[key] >= maxFor(key);
+const limitReached = (key) => guestLimitHit(homeRules(selectedCottage), guestCounts, key);
 
 const renderGuestCounts = () => {
   guestCountOutputs.forEach((output) => {
@@ -879,6 +879,7 @@ const setSelectedCottage = (cottage) => {
   selectedCottage = cottage;
   guestCounts.adults = Math.min(Math.max(guestCounts.adults, minFor("adults")), maxFor("adults"));
   guestCounts.pets = Math.min(guestCounts.pets, maxFor("pets"));
+  fitChildren(homeRules(cottage), guestCounts);
   renderGuestCounts();
   if (homeSelect) {
     homeSelect.value = cottage;

@@ -7,7 +7,7 @@ const LEGACY_SETTINGS_KEY = "avakhylSettingsV1";
 const DEFAULT_SETTINGS = {
   homes: {
     // basePrice baseGuests nəfərə qədər keçərlidir; sonrakı hər böyük üçün extraGuestPrice əlavə olunur.
-    // Limitlərdə və qiymətdə yalnız böyüklər sayılır, uşaqlar sayılmır.
+    // maxAdults evin tutumudur: böyük + uşaq birlikdə bu saydan çox ola bilməz. Qiymətdə yalnız böyüklər sayılır.
     qaya: { basePrice: 90, baseGuests: 3, extraGuestPrice: 20, minAdults: 1, maxAdults: 10, maxPets: 2, discountPercent: 10, discountMinNights: 3 },
     ardic: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 2, discountPercent: 0, discountMinNights: 3 },
     palid: { basePrice: 60, baseGuests: 3, extraGuestPrice: 0, minAdults: 1, maxAdults: 3, maxPets: 2, discountPercent: 0, discountMinNights: 3 },
@@ -152,6 +152,12 @@ const loadPromo = async (code) => {
 };
 
 const homeRules = (homeId) => SETTINGS.homes[homeId] ?? SETTINGS.homes.qaya;
+
+// böyüklər və uşaqlar evin tutumunu birlikdə doldurur; ev heyvanlarının ayrıca limiti var
+const guestLimitHit = (rules, guests, key) => (key === "pets" ? guests.pets >= rules.maxPets : guests.adults + guests.children >= rules.maxAdults);
+const fitChildren = (rules, guests) => {
+  guests.children = Math.max(0, Math.min(guests.children, rules.maxAdults - guests.adults));
+};
 
 const nightlyPrice = (homeId, adults) => {
   const rules = homeRules(homeId);
@@ -314,21 +320,21 @@ const RULE_TEXT = {
   az: {
     base: (n) => `${n} nəfərə qədər`,
     extra: "Hər əlavə nəfər",
-    max: (m) => `Maksimum ${m} nəfər (uşaqlar sayılmır)`,
+    max: (m) => `Maksimum ${m} nəfər (uşaqlar da daxil)`,
     discount: (n) => `${n} gecə və daha çox`,
     from: (p) => `${p} AZN-dən`
   },
   ru: {
     base: (n) => `До ${n} гостей`,
     extra: "Каждый следующий гость",
-    max: (m) => `Максимум ${m} гостей (дети не учитываются)`,
+    max: (m) => `Максимум ${m} гостей (включая детей)`,
     discount: (n) => `От ${n} ночей`,
     from: (p) => `от ${p} AZN`
   },
   en: {
     base: (n) => `Up to ${n} guests`,
     extra: "Each additional guest",
-    max: (m) => `Maximum ${m} guests (children not counted)`,
+    max: (m) => `Maximum ${m} guests (including children)`,
     discount: (n) => `${n} nights or more`,
     from: (p) => `from ${p} AZN`
   }

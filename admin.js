@@ -319,7 +319,7 @@ const HOME_FIELDS = [
   { key: "baseGuests", label: "Əsas qiymət neçə nəfərə qədərdir", min: 1 },
   { key: "extraGuestPrice", label: "Hər əlavə nəfər üçün (AZN)", hint: "0 olsa əlavə ödəniş yoxdur", min: 0 },
   { key: "minAdults", label: "Minimum böyük sayı", min: 1 },
-  { key: "maxAdults", label: "Maksimum böyük sayı", hint: "Uşaqlar sayılmır", min: 1 },
+  { key: "maxAdults", label: "Maksimum qonaq sayı", hint: "Böyük + uşaq birlikdə", min: 1 },
   { key: "maxPets", label: "Maksimum ev heyvanı", hint: "0 olsa ev heyvanı qəbul edilmir", min: 0 },
   { key: "discountPercent", label: "Endirim (%)", hint: "0 olsa endirim yoxdur", min: 0, max: 100 },
   { key: "discountMinNights", label: "Endirim neçə gecədən başlayır", min: 1 }
@@ -473,7 +473,7 @@ const readSettingsForm = () => {
       rules[field.key] = readNumber(`${homeKey}.${field.key}`, field);
     });
     if (rules.maxAdults < rules.minAdults) {
-      flag(`${homeKey}.maxAdults`, `${homes[homeKey]}: maksimum böyük sayı minimumdan az ola bilməz.`);
+      flag(`${homeKey}.maxAdults`, `${homes[homeKey]}: maksimum qonaq sayı minimum böyük sayından az ola bilməz.`);
     }
     next.homes[homeKey] = rules;
   });
