@@ -334,22 +334,6 @@ const numberField = (name, { label, hint, min = 0, max }, value) => `
   </label>
 `;
 
-const monthDayField = (name, label, hint, monthDay) => {
-  const [month, day] = monthDay.split("-").map(Number);
-  return `
-    <div class="admin-field" data-field="${name}">
-      <span>${label}</span>
-      <div class="admin-field-pair">
-        <input type="number" inputmode="numeric" name="${name}.day" value="${day}" min="1" max="31" aria-label="${label}: gün" />
-        <select name="${name}.month" aria-label="${label}: ay">
-          ${MONTH_OPTIONS.map((option, index) => `<option value="${index + 1}" ${index + 1 === month ? "selected" : ""}>${option}</option>`).join("")}
-        </select>
-      </div>
-      ${hint ? `<small>${hint}</small>` : ""}
-    </div>
-  `;
-};
-
 // giriş-çıxış arasındakı fasilə: qonaq çıxandan sonra evi növbəti qonağa hazırlamaq üçün qalan vaxt
 const timeGapText = (checkin, checkout) => {
   if (!checkin || !checkout) {
@@ -411,20 +395,6 @@ const renderSettingsForm = (settings) => {
       <legend>Bütün evlər</legend>
       ${numberField("deposit", { label: "Depozit (AZN)", hint: "Girişdə ödənilir, çıxışda qaytarılır", min: 0 }, settings.deposit)}
       ${numberField("holdHours", { label: "Gözləmə müddəti (saat)", hint: "Sorğudan sonra tarixlər bu müddət saxlanılır; ödəniş alınmasa avtomatik açılır", min: 1, max: 72 }, settings.holdHours)}
-      ${numberField("heating.fee", { label: "İstilik ödənişi (AZN)", hint: "0 olsa istilik ödənişi yoxdur", min: 0 }, settings.heating.fee)}
-      <label class="admin-field">
-        <span>İstilik ödənişi necə alınır</span>
-        <select name="heating.mode">
-          <option value="night" ${settings.heating.mode === "night" ? "selected" : ""}>Dövrə düşən hər gecə üçün</option>
-          <option value="stay" ${settings.heating.mode === "stay" ? "selected" : ""}>Qalış üçün bir dəfə</option>
-        </select>
-      </label>
-      <label class="admin-field admin-check">
-        <input type="checkbox" name="heating.discounted" ${settings.heating.discounted ? "checked" : ""} />
-        <span>Endirim istilik ödənişinə də tətbiq olunsun</span>
-      </label>
-      ${monthDayField("heating.start", "İstilik dövrü başlayır", "Bu günün gecəsi daxildir", settings.heating.start)}
-      ${monthDayField("heating.end", "İstilik dövrü bitir", "Bu tarixə qədər (bu günün gecəsi daxil deyil)", settings.heating.end)}
     </fieldset>
   `;
 };
@@ -455,17 +425,6 @@ const readSettingsForm = () => {
     }
     return value;
   };
-  const readMonthDay = (name) => {
-    const month = Number(data.get(`${name}.month`));
-    const day = Number(data.get(`${name}.day`));
-    const daysInMonth = new Date(2024, month, 0).getDate();
-    if (!Number.isInteger(day) || day < 1 || day > daysInMonth) {
-      flag(name, "İstilik dövrünün tarixini yoxlayın.");
-      return "01-01";
-    }
-    return `${pad(month)}-${pad(day)}`;
-  };
-
   const next = { homes: {}, heating: {}, deposit: readNumber("deposit"), holdHours: readNumber("holdHours", { min: 1, max: 72 }) };
   Object.keys(homes).forEach((homeKey) => {
     const rules = {};
@@ -488,16 +447,7 @@ const readSettingsForm = () => {
   } else if (isTime(next.checkinTime) && next.checkoutTime >= next.checkinTime) {
     flag("checkoutTime", "Çıxış saatı giriş saatından tez olmalıdır ki, çıxış günü evə yeni qonaq girə bilsin.");
   }
-  next.heating = {
-    fee: readNumber("heating.fee"),
-    start: readMonthDay("heating.start"),
-    end: readMonthDay("heating.end"),
-    mode: data.get("heating.mode") === "stay" ? "stay" : "night",
-    discounted: data.get("heating.discounted") === "on"
-  };
-  if (next.heating.start === next.heating.end) {
-    flag("heating.end", "İstilik dövrünün başlanğıc və son tarixi eyni ola bilməz.");
-  }
+  next.heating = { ...SETTINGS.heating, fee: 0 };
   return { settings: next, errors: [...new Set(errors)] };
 };
 

@@ -14,10 +14,10 @@ const DEFAULT_SETTINGS = {
     glamp4: { basePrice: 130, baseGuests: 4, extraGuestPrice: 0, minAdults: 1, maxAdults: 4, maxPets: 1, discountPercent: 0, discountMinNights: 3 },
     glamp2: { basePrice: 60, baseGuests: 2, extraGuestPrice: 0, minAdults: 1, maxAdults: 2, maxPets: 1, discountPercent: 0, discountMinNights: 3 }
   },
-  // istilik ödənişi: "AA-GG" formatında başlanğıc (daxil) və son (daxil deyil) tarixlər;
+  // istilik ödənişi alınmır (fee: 0); qiymət hesablamasında saxlanılıb. "AA-GG" formatında başlanğıc (daxil) və son (daxil deyil) tarixlər;
   // mode "night" — dövrə düşən hər gecə üçün, "stay" — dövrə düşən qalış üçün bir dəfə;
   // discounted — endirim istilik ödənişinə də tətbiq olunsun
-  heating: { fee: 20, start: "10-20", end: "03-20", mode: "night", discounted: false },
+  heating: { fee: 0, start: "10-20", end: "03-20", mode: "night", discounted: false },
   deposit: 50,
   // sorğu göndəriləndən sonra tarixlər bu qədər saat "gözləmədə" saxlanılır; ödəniş alınmasa avtomatik açılır (Supabase mərhələsində işə düşür)
   holdHours: 2,

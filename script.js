@@ -115,7 +115,6 @@ const translations = {
     "notes.four": "Evlərə yalnız kiçik ölçülü ev heyvanlarının gətirilməsinə icazə verilir. Heyvanlar qonağın nəzarəti altında olmalıdır.",
     "notes.fourB": "Aqressiv və təhlükə yarada biləcək heyvanların, o cümlədən doberman, alman ovçarkası, pitbull və rotveyler cinslərinin qəbulu qadağandır.",
     "notes.fourC": "Hər evə maksimum {maxPets} ev heyvanı qəbul edilir.",
-    "notes.five": "{heatingFrom} – {heatingTo} tarixləri arasında {heatingUnit} +{heatingFee} AZN istilik ödənişi alınır.",
     "faq.eyebrow": "FAQ",
     "faq.title": "Ən çox soruşulanlar",
     "faq.text": "Avakhyl haqqında əsas cavablar burada toplanıb.",
@@ -183,10 +182,6 @@ const translations = {
       {
         q: "Ev heyvanlarına icazə verilir?",
         a: `<p>Bəli, amma yalnız kiçik ölçülü ev heyvanlarına icazə verilir. Heyvanlar qonağın nəzarəti altında olmalıdır.</p><p>Aqressiv və təhlükə yarada biləcək heyvanların, o cümlədən doberman, alman ovçarkası, pitbull və rotveyler cinslərinin qəbulu qadağandır.</p><p>Hər evə maksimum {maxPets} ev heyvanı qəbul edilir.</p>`
-      },
-      {
-        q: "İstilik üçün əlavə ödəniş varmı?",
-        a: `<p>Bəli, {heatingFrom} – {heatingTo} tarixləri arasında {heatingUnit} +{heatingFee} AZN istilik ödənişi alınır.</p>`
       },
       {
         q: "Check-in zamanı depozit tələb olunur?",
@@ -277,7 +272,6 @@ const translations = {
     "notes.four": "Разрешается привозить только домашних животных небольшого размера. Животные должны находиться под присмотром гостя.",
     "notes.fourB": "Запрещено размещение агрессивных и потенциально опасных животных, в том числе пород доберман, немецкая овчарка, питбуль и ротвейлер.",
     "notes.fourC": "Максимальное количество домашних животных в доме: {maxPets}.",
-    "notes.five": "С {heatingFrom} по {heatingTo} взимается +{heatingFee} AZN за отопление {heatingUnit}.",
     "faq.eyebrow": "FAQ",
     "faq.title": "Частые вопросы",
     "faq.text": "Здесь собраны основные ответы об Avakhyl.",
@@ -345,10 +339,6 @@ const translations = {
       {
         q: "Можно ли с домашними животными?",
         a: `<p>Да, но только с домашними животными небольшого размера. Животные должны находиться под присмотром гостя.</p><p>Запрещено размещение агрессивных и потенциально опасных животных, в том числе пород доберман, немецкая овчарка, питбуль и ротвейлер.</p><p>В каждый дом допускается не более {maxPets} домашних животных.</p>`
-      },
-      {
-        q: "Есть ли доплата за отопление?",
-        a: `<p>Да, с {heatingFrom} по {heatingTo} взимается +{heatingFee} AZN за отопление {heatingUnit}.</p>`
       },
       {
         q: "Требуется ли депозит при check-in?",
@@ -439,7 +429,6 @@ const translations = {
     "notes.four": "Only small pets are allowed. Pets must be kept under the guest's supervision.",
     "notes.fourB": "Aggressive or potentially dangerous animals are not allowed, including Doberman, German Shepherd, Pit Bull and Rottweiler breeds.",
     "notes.fourC": "Maximum number of pets per home: {maxPets}.",
-    "notes.five": "From {heatingFrom} to {heatingTo}, a heating fee of +{heatingFee} AZN is charged {heatingUnit}.",
     "faq.eyebrow": "FAQ",
     "faq.title": "Frequently asked questions",
     "faq.text": "Key answers about Avakhyl are collected here.",
@@ -507,10 +496,6 @@ const translations = {
       {
         q: "Are pets allowed?",
         a: `<p>Yes, but only small pets are allowed. Pets must be kept under the guest's supervision.</p><p>Aggressive or potentially dangerous animals are not allowed, including Doberman, German Shepherd, Pit Bull and Rottweiler breeds.</p><p>A maximum of {maxPets} pets is allowed per home.</p>`
-      },
-      {
-        q: "Is there an extra heating charge?",
-        a: `<p>Yes, from {heatingFrom} to {heatingTo} a heating fee of +{heatingFee} AZN is charged {heatingUnit}.</p>`
       },
       {
         q: "Is a deposit required at check-in?",
