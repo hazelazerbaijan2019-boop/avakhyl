@@ -394,7 +394,7 @@ const homes = {
   },
   palid: {
     name: "Palıd 🌲",
-    image: "assets/palid/palid-01.webp",
+    image: "assets/palid/palid-03.webp",
     gallery: palidImages,
     videos: palidVideos,
     kicker: {
