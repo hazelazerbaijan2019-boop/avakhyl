@@ -344,7 +344,7 @@ const text = {
 
 const qayaImages = Array.from({ length: 18 }, (_, index) => `assets/qaya/qaya-${String(index + 1).padStart(2, "0")}.webp`).filter((src) => !src.endsWith("qaya-14.webp"));
 const qayaVideos = Array.from({ length: 5 }, (_, index) => `assets/qaya/qaya-video-${String(index + 1).padStart(2, "0")}.mp4`);
-const ardicImages = Array.from({ length: 16 }, (_, index) => `assets/ardic/ardic-${String(index + 1).padStart(2, "0")}.webp`);
+const ardicImages = Array.from({ length: 16 }, (_, index) => `assets/ardic/ardic-${String(index + 1).padStart(2, "0")}.webp`).filter((src) => !src.endsWith("ardic-02.webp"));
 const ardicVideos = Array.from({ length: 8 }, (_, index) => `assets/ardic/ardic-video-${String(index + 1).padStart(2, "0")}.mp4`);
 const palidImages = Array.from({ length: 17 }, (_, index) => `assets/palid/palid-${String(index + 1).padStart(2, "0")}.webp`);
 const palidVideos = Array.from({ length: 6 }, (_, index) => `assets/palid/palid-video-${String(index + 1).padStart(2, "0")}.mp4`);
