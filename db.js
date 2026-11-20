@@ -1,7 +1,7 @@
 // Supabase bağlantısı. Publishable açar saytda açıq ola bilər: bazanı RLS qaydaları qoruyur (supabase/schema.sql).
 const SUPABASE_URL = "https://lntsbcrxggikolxosiaj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_wZgDfDEk3PR8Uo0xPoKw-g_DmDE3Pae";
-const WHATSAPP_NUMBER = "994552625633";
+const WHATSAPP_NUMBER = "994519992522";
 
 // xəta mesajı bazadakı "raise exception" mətnidir: taken, promo, limit, invalid, not_cancellable
 const dbRequest = async (path, { method = "GET", body } = {}) => {
