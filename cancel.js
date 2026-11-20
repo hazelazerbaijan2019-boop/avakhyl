@@ -1,4 +1,4 @@
-// qonağın öz rezervini ləğv etdiyi səhifə: link WhatsApp mesajında gəlir (cancel.html?token=...)
+// köhnə WhatsApp mesajlarındakı ləğv linki (cancel.html?token=...): rezervin vəziyyətini göstərir; ləğvi əməkdaş admin paneldən edir
 const params = new URLSearchParams(window.location.search);
 const token = params.get("token") || "";
 let currentLang = ["az", "ru", "en"].includes(params.get("lang")) ? params.get("lang") : "az";
@@ -18,7 +18,7 @@ const text = {
     status: "Vəziyyət",
     loading: "Yüklənir...",
     notFound: "Rezerv tapılmadı. Linki yoxlayın və ya bizə WhatsApp-dan yazın.",
-    ask: "Rezervi ləğv etmək istəyirsiniz? Tarixlər digər qonaqlar üçün açılacaq.",
+    ask: "Rezervi ləğv etmək üçün WhatsApp-dan bizə yazın, əməkdaşımız ləğv edəcək.",
     paid: "Ödənilmiş məbləğ geri qaytarılmır.",
     accept: "Bəli, rezervi ləğv etmək istəyirəm",
     button: "Rezervi ləğv et",
@@ -41,7 +41,7 @@ const text = {
     status: "Статус",
     loading: "Загрузка...",
     notFound: "Бронь не найдена. Проверьте ссылку или напишите нам в WhatsApp.",
-    ask: "Вы хотите отменить бронь? Даты станут доступны другим гостям.",
+    ask: "Чтобы отменить бронь, напишите нам в WhatsApp — наш сотрудник её отменит.",
     paid: "Оплаченная сумма не возвращается.",
     accept: "Да, я хочу отменить бронь",
     button: "Отменить бронь",
@@ -64,7 +64,7 @@ const text = {
     status: "Status",
     loading: "Loading...",
     notFound: "Reservation not found. Check the link or message us on WhatsApp.",
-    ask: "Do you want to cancel your reservation? The dates will become available to other guests.",
+    ask: "To cancel your reservation, message us on WhatsApp and our team will cancel it.",
     paid: "The amount paid is not refunded.",
     accept: "Yes, I want to cancel the reservation",
     button: "Cancel reservation",
@@ -130,8 +130,8 @@ const render = (state = "") => {
   else if (isOpen()) message.textContent = `${t.ask}${reservation.status === "confirmed" ? ` ${t.paid}` : ""}`;
   else message.textContent = t.closedBy[reservation.status] ?? t.closed;
 
-  confirmBox.hidden = !isOpen();
-  button.hidden = !isOpen();
+  confirmBox.hidden = true;
+  button.hidden = true;
   button.disabled = !accept.checked;
 };
 

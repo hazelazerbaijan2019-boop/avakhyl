@@ -41,8 +41,6 @@ const cancelReservationByToken = (token) => dbRpc("cancel_reservation", { p_toke
 const BOOKING_ERRORS = ["taken", "promo", "limit", "invalid"];
 const bookingErrorKey = (error) => `booking.${BOOKING_ERRORS.includes(error?.message) ? error.message : "failed"}`;
 
-const cancelLinkFor = (token, lang) => new URL(`cancel.html?token=${token}&lang=${lang}`, window.location.href).href;
-
 // qonaq WhatsApp-dan geri qayıdıb yenidən "Göndər" bassa, eyni sorğu təkrar yaradılmır (öz sorğusu ilə "tutulub" xətası almasın):
 // gözləmə vaxtı bitməyibsə əvvəlki sorğunun nömrəsi ilə WhatsApp yenidən açılır
 const LAST_BOOKING_KEY = "avakhylLastBooking";
@@ -94,12 +92,11 @@ const sendReservation = async ({ payload, buildMessage, getText, button, statusB
   }
 };
 
-// WhatsApp mesajının başlığı: əməkdaş rezervi admin paneldə nömrə ilə tapır
-const reservationMessageHead = (result, lang) => [
+// WhatsApp mesajının başlığı: əməkdaş rezervi admin paneldə nömrə ilə tapır; ləğv yalnız admin paneldən edilir
+const reservationMessageHead = (result) => [
   "Avakhyl rezervasiya sorğusu",
   `Rezerv nömrəsi: #${result.number}`,
   `Tarixlər ${SETTINGS.holdHours} saat saxlanılır`,
-  `Ləğv linki: ${cancelLinkFor(result.token, lang)}`,
   ""
 ];
 

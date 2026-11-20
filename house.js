@@ -1092,7 +1092,7 @@ const buildWhatsAppMessage = (result) => {
   const { nights, lines, discount, promo, heating, total } = getReservationMath();
   const formData = new FormData(reservationForm);
   return [
-    ...reservationMessageHead(result, currentLang),
+    ...reservationMessageHead(result),
     `Ev: ${home.name}`,
     `Giriş (saat ${SETTINGS.checkinTime}): ${formatDate(reservationState.checkin)}`,
     `Çıxış (saat ${SETTINGS.checkoutTime}): ${formatDate(reservationState.checkout)}`,
