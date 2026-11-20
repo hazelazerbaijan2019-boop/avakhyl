@@ -324,7 +324,6 @@ const HOME_FIELDS = [
   { key: "discountPercent", label: "Endirim (%)", hint: "0 olsa endirim yoxdur", min: 0, max: 100 },
   { key: "discountMinNights", label: "Endirim neçə gecədən başlayır", min: 1 }
 ];
-const MONTH_OPTIONS = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avqust", "sentyabr", "oktyabr", "noyabr", "dekabr"];
 
 const numberField = (name, { label, hint, min = 0, max }, value) => `
   <label class="admin-field" data-field="${name}">
