@@ -19,7 +19,6 @@ const text = {
     loading: "Yüklənir...",
     notFound: "Rezerv tapılmadı. Linki yoxlayın və ya bizə WhatsApp-dan yazın.",
     ask: "Rezervi ləğv etmək istəyirsiniz? Tarixlər digər qonaqlar üçün açılacaq.",
-    prepay: "Ödənilmiş beh geri qaytarılmır.",
     accept: "Bəli, rezervi ləğv etmək istəyirəm",
     button: "Rezervi ləğv et",
     done: "Rezerviniz ləğv olundu.",
@@ -37,7 +36,6 @@ const text = {
     loading: "Загрузка...",
     notFound: "Бронь не найдена. Проверьте ссылку или напишите нам в WhatsApp.",
     ask: "Вы хотите отменить бронь? Даты станут доступны другим гостям.",
-    prepay: "Оплаченная предоплата не возвращается.",
     accept: "Да, я хочу отменить бронь",
     button: "Отменить бронь",
     done: "Ваша бронь отменена.",
@@ -55,7 +53,6 @@ const text = {
     loading: "Loading...",
     notFound: "Reservation not found. Check the link or message us on WhatsApp.",
     ask: "Do you want to cancel your reservation? The dates will become available to other guests.",
-    prepay: "A paid prepayment is not refunded.",
     accept: "Yes, I want to cancel the reservation",
     button: "Cancel reservation",
     done: "Your reservation has been cancelled.",
@@ -112,7 +109,7 @@ const render = (state = "") => {
   if (state === "loading") message.textContent = t.loading;
   else if (!reservation) message.textContent = t.notFound;
   else if (cancelled) message.textContent = t.done;
-  else if (isOpen()) message.textContent = `${t.ask}${reservation.status === "confirmed" ? ` ${t.prepay}` : ""}`;
+  else if (isOpen()) message.textContent = `${t.ask}`;
   else message.textContent = t.closed;
 
   confirmBox.hidden = !isOpen();

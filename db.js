@@ -120,7 +120,6 @@ const reservationPayload = ({ home, checkin, checkout, guests, form, math, lang 
     promo: math.promo.amount ? math.promo.code : "",
     promoAmount: math.promo.amount,
     total: math.total,
-    prepay: PREPAY_PERCENT ? prepayFor(math.total) : 0,
     lang
   };
 };

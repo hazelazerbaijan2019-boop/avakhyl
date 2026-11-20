@@ -122,8 +122,6 @@ const text = {
     "promo.ok": "Promokod tətbiq olundu.",
     "promo.invalid": "Belə promokod tapılmadı.",
     "promo.used": "Bu promokod artıq istifadə olunub.",
-    "reservation.rest": "Qalığı — girişdə ödənilir",
-    "reservation.prepay": "Beh ({prepay}%) — əməkdaşımız əlaqə saxlayıb qəbul edəcək",
     "promo.inactive": "Bu promokod hazırda aktiv deyil.",
     "promo.expired": "Bu promokodun müddəti bitib və ya hələ başlamayıb.",
     "promo.home": "Bu promokod seçdiyiniz ev üçün keçərli deyil.",
@@ -145,7 +143,7 @@ const text = {
     "reservation.continue": "Davam Et",
     "reservation.nightCount": "Cəmi gecə sayı",
     "reservation.warningTitle": "Xəbərdarlıq",
-    "reservation.warningText": "Bu sorğunu göndərməklə rezervasiya prosesini başladırsınız. Sorğunuz yoxlanıldıqdan sonra əməkdaşımız sizinlə əlaqə saxlayacaq və ümumi məbləğin {prepay}%-ni beh olaraq qəbul edəcək — rezervasiya beh ödənildikdən sonra təsdiqlənir. Qalığı girişdə ödənilir. Rezervasiya ləğv olunarsa, beh geri qaytarılmır.",
+    "reservation.warningText": "Bu sorğunu göndərməklə rezervasiya prosesini başladırsınız. Sorğunuz yoxlanıldıqdan sonra əməkdaşımız sizinlə əlaqə saxlayacaq və ümumi məbləğin ödənişini qəbul edəcək — rezervasiya ödəniş edildikdən sonra təsdiqlənir.",
     "reservation.accept": "Təsdiq edirəm",
     "reservation.send": "Göndər",
     "reservation.reserved": "Rezerv",
@@ -217,8 +215,6 @@ const text = {
     "promo.ok": "Промокод применён.",
     "promo.invalid": "Такой промокод не найден.",
     "promo.used": "Этот промокод уже использован.",
-    "reservation.rest": "Остаток — при заезде",
-    "reservation.prepay": "Предоплата ({prepay}%) — наш сотрудник свяжется с вами",
     "promo.inactive": "Этот промокод сейчас не активен.",
     "promo.expired": "Срок действия промокода истёк или ещё не начался.",
     "promo.home": "Этот промокод не действует для выбранного дома.",
@@ -240,7 +236,7 @@ const text = {
     "reservation.continue": "Продолжить",
     "reservation.nightCount": "Всего ночей",
     "reservation.warningTitle": "Предупреждение",
-    "reservation.warningText": "Отправляя этот запрос, вы начинаете процесс бронирования. После проверки запроса наш сотрудник свяжется с вами и примет предоплату в размере {prepay}% от общей суммы — бронирование подтверждается после её оплаты. Остаток оплачивается при заезде. При отмене бронирования предоплата не возвращается.",
+    "reservation.warningText": "Отправляя этот запрос, вы начинаете процесс бронирования. После проверки запроса наш сотрудник свяжется с вами и примет оплату полной суммы — бронирование подтверждается после оплаты.",
     "reservation.accept": "Подтверждаю",
     "reservation.send": "Отправить",
     "reservation.reserved": "Занято",
@@ -312,8 +308,6 @@ const text = {
     "promo.ok": "Promo code applied.",
     "promo.invalid": "This promo code was not found.",
     "promo.used": "This promo code has already been used.",
-    "reservation.rest": "Balance — paid at check-in",
-    "reservation.prepay": "Prepayment ({prepay}%) — our team will contact you",
     "promo.inactive": "This promo code is not active right now.",
     "promo.expired": "This promo code has expired or is not active yet.",
     "promo.home": "This promo code is not valid for the selected home.",
@@ -335,7 +329,7 @@ const text = {
     "reservation.continue": "Continue",
     "reservation.nightCount": "Total nights",
     "reservation.warningTitle": "Warning",
-    "reservation.warningText": "By sending this request you start the reservation process. Once your request is reviewed, our team will contact you to collect a {prepay}% prepayment of the total — the reservation is confirmed after it is paid. The balance is paid at check-in. If the reservation is cancelled, the prepayment is not refunded.",
+    "reservation.warningText": "By sending this request you start the reservation process. Once your request is reviewed, our team will contact you to collect payment of the full amount — the reservation is confirmed once it is paid.",
     "reservation.accept": "I confirm",
     "reservation.send": "Send",
     "reservation.reserved": "Reserved",
@@ -943,11 +937,6 @@ const renderReservationSummary = () => {
     row.hidden = !heating;
   });
   setElementText("[data-deposit-amount]", formatCurrency(DEPOSIT));
-  setElementText("[data-prepay-amount]", formatCurrency(prepayFor(total)));
-  setElementText("[data-rest-amount]", formatCurrency(total - prepayFor(total)));
-  document.querySelectorAll(".summary-prepay, .summary-rest").forEach((row) => {
-    row.hidden = !PREPAY_PERCENT;
-  });
 
   if (reservationGuestLine) {
     reservationGuestLine.textContent = guestLine;
@@ -1116,9 +1105,6 @@ const buildWhatsAppMessage = (result) => {
     ...(promo.amount ? [`Promokod ${promo.code}: −${formatCurrency(promo.amount)}`] : []),
     ...(heating ? [`İstilik ödənişi: +${formatCurrency(heating)}`] : []),
     `Cəmi: ${formatCurrency(total)}`,
-    ...(PREPAY_PERCENT
-      ? [`Beh (${PREPAY_PERCENT}%, əməkdaşınız əlaqə saxlayıb qəbul edəcək): ${formatCurrency(prepayFor(total))}`, `Qalığı (girişdə): ${formatCurrency(total - prepayFor(total))}`]
-      : []),
     `Depozit (girişdə ödənilir, çıxışda qaytarılır): ${formatCurrency(DEPOSIT)}`,
     `Ad: ${formData.get("firstName")}`,
     `Soyad: ${formData.get("lastName")}`,

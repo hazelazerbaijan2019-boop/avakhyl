@@ -19,9 +19,7 @@ const DEFAULT_SETTINGS = {
   // discounted — endirim istilik ödənişinə də tətbiq olunsun
   heating: { fee: 20, start: "10-20", end: "03-20", mode: "night", discounted: false },
   deposit: 50,
-  // beh: rezervasiya təsdiqlənəndə ümumi məbləğin bu faizi ödənilir; ləğv olunarsa geri qaytarılmır
-  prepayPercent: 50,
-  // sorğu göndəriləndən sonra tarixlər bu qədər saat "gözləmədə" saxlanılır; beh alınmasa avtomatik açılır (Supabase mərhələsində işə düşür)
+  // sorğu göndəriləndən sonra tarixlər bu qədər saat "gözləmədə" saxlanılır; ödəniş alınmasa avtomatik açılır (Supabase mərhələsində işə düşür)
   holdHours: 2,
   // giriş və çıxış saatları ("SS:DD"); çıxış girişdən tez olmalıdır ki, çıxış günü həmin evə yeni qonaq girə bilsin
   checkinTime: "14:00",
@@ -119,7 +117,6 @@ const fixTimes = (settings) => {
 
 const SETTINGS = fixTimes(loadSettings());
 let DEPOSIT = SETTINGS.deposit;
-let PREPAY_PERCENT = SETTINGS.prepayPercent;
 
 // bazadan gələn ayarları tətbiq edir; promokodlar ayrıca yüklənir (loadPromo), ona görə saxlanılır
 const applySettings = (data) => {
@@ -127,7 +124,6 @@ const applySettings = (data) => {
   next.promoCodes = SETTINGS.promoCodes;
   Object.assign(SETTINGS, next);
   DEPOSIT = SETTINGS.deposit;
-  PREPAY_PERCENT = SETTINGS.prepayPercent;
 };
 
 // səhifə keşdəki ayarlarla dərhal açılır; bazadakı ayarlar fərqlidirsə "avakhyl:settings" hadisəsi ilə yenidən çəkilir
@@ -154,7 +150,6 @@ const loadPromo = async (code) => {
     SETTINGS.promoCodes = [];
   }
 };
-const prepayFor = (total) => Math.round((total * PREPAY_PERCENT) / 100);
 
 const homeRules = (homeId) => SETTINGS.homes[homeId] ?? SETTINGS.homes.qaya;
 
@@ -377,7 +372,6 @@ const fillSettings = (value, lang, homeId) => {
   const rules = homeId ? homeRules(homeId) : null;
   const vars = {
     deposit: SETTINGS.deposit,
-    prepay: SETTINGS.prepayPercent,
     checkin: SETTINGS.checkinTime,
     checkout: SETTINGS.checkoutTime,
     heatingFee: SETTINGS.heating.fee,

@@ -410,8 +410,7 @@ const renderSettingsForm = (settings) => {
     <fieldset class="admin-settings-card">
       <legend>Bütün evlər</legend>
       ${numberField("deposit", { label: "Depozit (AZN)", hint: "Girişdə ödənilir, çıxışda qaytarılır", min: 0 }, settings.deposit)}
-      ${numberField("holdHours", { label: "Gözləmə müddəti (saat)", hint: "Sorğudan sonra tarixlər bu müddət saxlanılır; beh alınmasa avtomatik açılır", min: 1, max: 72 }, settings.holdHours)}
-      ${numberField("prepayPercent", { label: "Beh (%)", hint: "Təsdiqdən sonra ödənilir, ləğv olunarsa qaytarılmır. 0 olsa beh alınmır", min: 0, max: 100 }, settings.prepayPercent)}
+      ${numberField("holdHours", { label: "Gözləmə müddəti (saat)", hint: "Sorğudan sonra tarixlər bu müddət saxlanılır; ödəniş alınmasa avtomatik açılır", min: 1, max: 72 }, settings.holdHours)}
       ${numberField("heating.fee", { label: "İstilik ödənişi (AZN)", hint: "0 olsa istilik ödənişi yoxdur", min: 0 }, settings.heating.fee)}
       <label class="admin-field">
         <span>İstilik ödənişi necə alınır</span>
@@ -467,7 +466,7 @@ const readSettingsForm = () => {
     return `${pad(month)}-${pad(day)}`;
   };
 
-  const next = { homes: {}, heating: {}, deposit: readNumber("deposit"), prepayPercent: readNumber("prepayPercent", { min: 0, max: 100 }), holdHours: readNumber("holdHours", { min: 1, max: 72 }) };
+  const next = { homes: {}, heating: {}, deposit: readNumber("deposit"), holdHours: readNumber("holdHours", { min: 1, max: 72 }) };
   Object.keys(homes).forEach((homeKey) => {
     const rules = {};
     HOME_FIELDS.forEach((field) => {
@@ -1058,7 +1057,7 @@ const reservationGuests = (item) =>
 
 const RESERVATION_ACTIONS = {
   pending: [
-    { action: "confirm", label: "Təsdiqlə — beh alındı", className: "reservation-submit" },
+    { action: "confirm", label: "Təsdiqlə — ödəniş alındı", className: "reservation-submit" },
     { action: "extend", label: () => `Vaxtı uzat (+${SETTINGS.holdHours} saat)`, className: "admin-clear-button" },
     { action: "reject", label: "Rədd et", className: "admin-clear-button admin-danger" }
   ],
@@ -1086,7 +1085,6 @@ const reservationCard = (item) => {
         <dt>Telefon</dt><dd><a href="tel:${escapeAttr(item.phone)}">${escapeAttr(item.phone)}</a> · <a href="https://wa.me/${whatsappNumber(item.phone)}" target="_blank" rel="noopener">WhatsApp</a></dd>
         ${item.email ? `<dt>E-poçt</dt><dd>${escapeAttr(item.email)}</dd>` : ""}
         <dt>Cəmi</dt><dd>${item.total} AZN</dd>
-        ${Number(item.prepay) ? `<dt>Beh</dt><dd>${item.prepay} AZN</dd>` : ""}
         ${item.promo_code ? `<dt>Promokod</dt><dd>${escapeAttr(item.promo_code)}</dd>` : ""}
         ${item.admin_note ? `<dt>Qeyd</dt><dd>${escapeAttr(item.admin_note)}</dd>` : ""}
         <dt>Göndərilib</dt><dd>${formatDateTime(item.created_at)}</dd>
@@ -1163,9 +1161,9 @@ reservationsList?.addEventListener("click", async (event) => {
   const action = button.dataset.reservationAction;
   const holdMs = SETTINGS.holdHours * 3600000;
   const questions = {
-    confirm: `#${item.number} rezervi təsdiqlənsin? Bunu beh alındıqdan sonra edin.`,
+    confirm: `#${item.number} rezervi təsdiqlənsin? Bunu ödəniş alındıqdan sonra edin.`,
     reject: `#${item.number} sorğusu rədd edilsin? Tarixlər dərhal açılacaq.`,
-    cancel: `#${item.number} rezervi ləğv edilsin? Tarixlər dərhal açılacaq. Beh qaydaya görə qaytarılmır.`
+    cancel: `#${item.number} rezervi ləğv edilsin? Tarixlər dərhal açılacaq.`
   };
   if (questions[action] && !window.confirm(questions[action])) {
     return;
