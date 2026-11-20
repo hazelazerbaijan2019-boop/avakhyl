@@ -373,7 +373,7 @@ const homes = {
   },
   ardic: {
     name: "Ardıc 🌳",
-    image: "assets/ardic/ardic-01.webp",
+    image: "assets/ardic/ardic-03.webp",
     gallery: ardicImages,
     videos: ardicVideos,
     kicker: {
