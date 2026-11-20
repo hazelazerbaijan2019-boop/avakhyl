@@ -1162,8 +1162,8 @@ reservationsList?.addEventListener("click", async (event) => {
   const holdMs = SETTINGS.holdHours * 3600000;
   const questions = {
     confirm: `#${item.number} rezervi təsdiqlənsin? Bunu ödəniş alındıqdan sonra edin.`,
-    reject: `#${item.number} sorğusu rədd edilsin? Tarixlər dərhal açılacaq.`,
-    cancel: `#${item.number} rezervi ləğv edilsin? Tarixlər dərhal açılacaq.`
+    reject: `#${item.number} sorğusu rədd edilsin? Tarixlər dərhal açılacaq. Ödəniş qaydaya görə qaytarılmır.`,
+    cancel: `#${item.number} rezervi ləğv edilsin? Tarixlər dərhal açılacaq. Ödəniş qaydaya görə qaytarılmır.`
   };
   if (questions[action] && !window.confirm(questions[action])) {
     return;

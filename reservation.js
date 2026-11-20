@@ -84,7 +84,7 @@ const text = {
     "reservation.phone": "+994 mobil nömrə",
     "reservation.continue": "Davam Et",
     "reservation.warningTitle": "Xəbərdarlıq",
-    "reservation.warningText": "Bu sorğunu göndərməklə rezervasiya prosesini başladırsınız. Sorğunuz yoxlanıldıqdan sonra əməkdaşımız sizinlə əlaqə saxlayacaq və ümumi məbləğin ödənişini qəbul edəcək — rezervasiya ödəniş edildikdən sonra təsdiqlənir.",
+    "reservation.warningText": "Bu sorğunu göndərməklə rezervasiya prosesini başladırsınız. Sorğunuz yoxlanıldıqdan sonra əməkdaşımız sizinlə əlaqə saxlayacaq və ümumi məbləğin ödənişini qəbul edəcək — rezervasiya ödəniş edildikdən sonra təsdiqlənir. Ödəniş öncədən alınır; rezervasiya ləğv olunarsa, ödəniş geri qaytarılmır.",
     "reservation.accept": "Təsdiq edirəm",
     "reservation.send": "Göndər"
   },
@@ -129,7 +129,7 @@ const text = {
     "reservation.phone": "+994 мобильный номер",
     "reservation.continue": "Продолжить",
     "reservation.warningTitle": "Предупреждение",
-    "reservation.warningText": "Отправляя этот запрос, вы начинаете процесс бронирования. После проверки запроса наш сотрудник свяжется с вами и примет оплату полной суммы — бронирование подтверждается после оплаты.",
+    "reservation.warningText": "Отправляя этот запрос, вы начинаете процесс бронирования. После проверки запроса наш сотрудник свяжется с вами и примет оплату полной суммы — бронирование подтверждается после оплаты. Оплата вносится заранее; при отмене бронирования она не возвращается.",
     "reservation.accept": "Подтверждаю",
     "reservation.send": "Отправить"
   },
@@ -174,7 +174,7 @@ const text = {
     "reservation.phone": "+994 mobile number",
     "reservation.continue": "Continue",
     "reservation.warningTitle": "Warning",
-    "reservation.warningText": "By sending this request you start the reservation process. Once your request is reviewed, our team will contact you to collect payment of the full amount — the reservation is confirmed once it is paid.",
+    "reservation.warningText": "By sending this request you start the reservation process. Once your request is reviewed, our team will contact you to collect payment of the full amount — the reservation is confirmed once it is paid. Payment is taken in advance and is not refunded if the reservation is cancelled.",
     "reservation.accept": "I confirm",
     "reservation.send": "Send"
   }
