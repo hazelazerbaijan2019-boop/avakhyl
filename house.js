@@ -344,7 +344,7 @@ const ardicImages = Array.from({ length: 16 }, (_, index) => `assets/ardic/ardic
 const ardicVideos = Array.from({ length: 8 }, (_, index) => `assets/ardic/ardic-video-${String(index + 1).padStart(2, "0")}.mp4`);
 const palidImages = Array.from({ length: 17 }, (_, index) => `assets/palid/palid-${String(index + 1).padStart(2, "0")}.webp`);
 const palidVideos = Array.from({ length: 6 }, (_, index) => `assets/palid/palid-video-${String(index + 1).padStart(2, "0")}.mp4`);
-const glamp2Images = Array.from({ length: 6 }, (_, index) => `assets/glamp2/glamp2-${String(index + 1).padStart(2, "0")}.webp`);
+const glamp2Images = ["01", "02", "06"].map((n) => `assets/glamp2/glamp2-${n}.webp`);
 const glamp2Videos = ["assets/glamp2/glamp2-video-01.mp4"];
 const glamp4Images = Array.from({ length: 11 }, (_, index) => `assets/glamp4/glamp4-${String(index + 1).padStart(2, "0")}.webp`);
 const glamp4Videos = ["assets/glamp4/glamp4-video-01.mp4"];
