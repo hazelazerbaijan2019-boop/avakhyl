@@ -2482,6 +2482,29 @@ img {
   text-decoration: line-through;
 }
 
+/* təsdiq gözləyən sorğunun saxladığı gün: seçilmir, klikləyəndə izah çıxır */
+.calendar-day.is-pending {
+  border: 1px dashed rgba(184, 134, 38, 0.6);
+  background: rgba(214, 163, 58, 0.12);
+  color: #8a6418;
+  text-decoration: none;
+  cursor: help;
+}
+
+.calendar-day.is-pending em {
+  color: #8a6418;
+  font-size: 0.7rem;
+}
+
+[data-theme="dark"] .calendar-day.is-pending,
+[data-theme="dark"] .calendar-day.is-pending em {
+  color: #e2bd6a;
+}
+
+.pets-info.calendar-note {
+  margin-top: 14px;
+}
+
 .calendar-day.is-selected {
   border-color: var(--leaf);
   background: var(--leaf);

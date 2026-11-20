@@ -19,6 +19,7 @@ const calendarMonths = document.querySelector("[data-calendar-months]");
 const facilitiesList = document.querySelector("[data-facilities-list]");
 const calendarPrev = document.querySelector("[data-calendar-prev]");
 const calendarNext = document.querySelector("[data-calendar-next]");
+const calendarNote = document.querySelector("[data-calendar-note]");
 const reservationGuestLine = document.querySelector("[data-reservation-guest-line]");
 const reservationGuestToggle = document.querySelector("[data-reservation-guests-toggle]");
 const reservationGuestEditor = document.querySelector("[data-reservation-guest-editor]");
@@ -147,6 +148,8 @@ const text = {
     "reservation.accept": "Təsdiq edirəm",
     "reservation.send": "Göndər",
     "reservation.reserved": "Rezerv",
+    "reservation.pending": "Gözləmədə",
+    "reservation.pendingNote": "Bu tarix üçün başqa qonaq artıq sorğu göndərib və sorğu hazırda təsdiq gözləyir. {hours} saat ərzində təsdiqlənməsə, tarix yenidən boşalacaq və rezerv edə biləcəksiniz.",
     "reservation.noDates": "Rezervasiya üçün giriş və çıxış tarixini seçin."
   },
   ru: {
@@ -239,6 +242,8 @@ const text = {
     "reservation.accept": "Подтверждаю",
     "reservation.send": "Отправить",
     "reservation.reserved": "Занято",
+    "reservation.pending": "Ожидание",
+    "reservation.pendingNote": "На эту дату другой гость уже отправил запрос, и он ожидает подтверждения. Если его не подтвердят в течение {hours} ч., дата снова станет свободной и вы сможете её забронировать.",
     "reservation.noDates": "Выберите даты заезда и выезда для бронирования."
   },
   en: {
@@ -331,6 +336,8 @@ const text = {
     "reservation.accept": "I confirm",
     "reservation.send": "Send",
     "reservation.reserved": "Reserved",
+    "reservation.pending": "Pending",
+    "reservation.pendingNote": "Another guest has already sent a request for this date and it is awaiting confirmation. If it is not confirmed within {hours} hours, the date will become available again and you can book it.",
     "reservation.noDates": "Choose check-in and check-out dates before reserving."
   }
 };
@@ -808,8 +815,10 @@ const normalizeBookedDates = (value) => ({
 
 // dolu gecələr bazadan gəlir (admin bağladıqları + gözləyən və təsdiqlənmiş rezervlər)
 let busyNights = emptyBookedDates();
+let pendingNights = emptyBookedDates();
 
 const getSelectedBookedDates = () => new Set(busyNights[selectedHome] || []);
+const isDatePending = (iso) => (pendingNights[selectedHome] || []).includes(iso);
 
 const toIsoDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 const fromIsoDate = (iso) => {
@@ -965,21 +974,24 @@ const buildMonthCalendar = (monthDate) => {
     // seçilmiş girişdən sonra dolu gün yalnız çıxış günü kimi seçilə bilər
     const canCheckout =
       reserved && !past && reservationState.checkin && !reservationState.checkout && iso > reservationState.checkin && !rangeHasUnavailableDate(reservationState.checkin, iso);
-    const disabled = past || (reserved && !canCheckout);
+    // gözləmədəki gün seçilmir, amma kliklənir ki, qonaq səbəbi görsün
+    const pending = reserved && !past && !canCheckout && isDatePending(iso);
+    const disabled = past || (reserved && !canCheckout && !pending);
     const isCheckin = reservationState.checkin === iso;
     const isCheckout = reservationState.checkout === iso;
     const isInRange = reservationState.checkin && reservationState.checkout && iso > reservationState.checkin && iso < reservationState.checkout;
 
     return `
       <button
-        class="calendar-day ${disabled ? "is-unavailable" : ""} ${past ? "is-past" : ""} ${reserved ? "is-reserved" : ""} ${canCheckout ? "is-checkout-only" : ""} ${isCheckin || isCheckout ? "is-selected" : ""} ${isInRange ? "is-in-range" : ""} ${special && !reserved ? "is-special" : ""}"
+        class="calendar-day ${disabled ? "is-unavailable" : ""} ${past ? "is-past" : ""} ${reserved ? "is-reserved" : ""} ${canCheckout ? "is-checkout-only" : ""} ${isCheckin || isCheckout ? "is-selected" : ""} ${isInRange ? "is-in-range" : ""} ${special && !reserved ? "is-special" : ""} ${pending ? "is-pending" : ""}"
         type="button"
         data-calendar-date="${iso}"
         ${special ? `title="${special.name}"` : ""}
         ${disabled ? "disabled" : ""}
+        ${pending ? `aria-disabled="true"` : ""}
       >
         <span>${day}</span>
-        <em>${canCheckout ? getText("reservation.checkoutOnly") : reserved ? getText("reservation.reserved") : formatCurrency(calendarNightPrice(selectedHome, reservationState.guests.adults, iso))}</em>
+        <em>${canCheckout ? getText("reservation.checkoutOnly") : pending ? getText("reservation.pending") : reserved ? getText("reservation.reserved") : formatCurrency(calendarNightPrice(selectedHome, reservationState.guests.adults, iso))}</em>
       </button>
     `;
   }).join("");
@@ -1006,6 +1018,13 @@ const renderCalendar = () => {
   calendarMonths.querySelectorAll("[data-calendar-date]").forEach((button) => {
     button.addEventListener("click", () => {
       const iso = button.dataset.calendarDate;
+      if (calendarNote) {
+        calendarNote.hidden = !button.classList.contains("is-pending");
+        calendarNote.textContent = getText("reservation.pendingNote").replace("{hours}", SETTINGS.holdHours);
+      }
+      if (button.classList.contains("is-pending")) {
+        return;
+      }
       if (!reservationState.checkin || reservationState.checkout || iso <= reservationState.checkin) {
         if (isDateUnavailable(iso)) {
           return;
@@ -1469,7 +1488,9 @@ document.addEventListener("keydown", (event) => {
 // dolu tarixlər açılışda, səhifəyə qayıdanda və hər dəqiqə yenilənir
 const refreshBookingAvailability = async () => {
   try {
-    busyNights = normalizeBookedDates(await fetchBusyNights());
+    const nights = await fetchBusyNights();
+    busyNights = normalizeBookedDates(nights);
+    pendingNights = normalizeBookedDates(nights.pending);
     renderBookingFlow();
   } catch {
     // internet yoxdursa son yüklənən tarixlər qalır

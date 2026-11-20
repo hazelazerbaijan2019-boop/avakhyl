@@ -22,11 +22,14 @@ const dbRpc = (name, args = {}) => dbRequest(`rpc/${name}`, { method: "POST", bo
 
 const fetchSiteSettings = async () => (await dbRequest("site_settings?id=eq.1&select=data"))?.[0]?.data ?? {};
 
-// dolu gecələr evlər üzrə: { qaya: ["2026-12-10", ...], ... }
+// dolu gecələr evlər üzrə: { qaya: ["2026-12-10", ...], ..., pending: { qaya: [...] } }; pending — təsdiq gözləyən sorğunun saxladığı gecələr
 const fetchBusyNights = async () => {
   const rows = await dbRpc("get_busy_nights");
-  const busy = { qaya: [], ardic: [], palid: [], glamp4: [], glamp2: [] };
-  (rows ?? []).forEach(({ home, night }) => busy[home]?.push(night));
+  const busy = { qaya: [], ardic: [], palid: [], glamp4: [], glamp2: [], pending: { qaya: [], ardic: [], palid: [], glamp4: [], glamp2: [] } };
+  (rows ?? []).forEach(({ home, night, pending }) => {
+    busy[home]?.push(night);
+    if (pending) busy.pending[home]?.push(night);
+  });
   return busy;
 };
 
